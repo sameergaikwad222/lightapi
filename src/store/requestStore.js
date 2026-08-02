@@ -17,6 +17,9 @@ const useRequestStore = create((set) => ({
     token: "",
     username: "",
     password: "",
+    apiKey: "",
+    apiValue: "",
+    apiLocation: "header",
   },
 
   setMethod: (method) => set({ method }),

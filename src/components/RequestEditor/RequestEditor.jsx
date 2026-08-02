@@ -158,6 +158,7 @@ function RequestEditor() {
               <option value="none">None</option>
               <option value="bearer">Bearer Token</option>
               <option value="basic">Basic Auth</option>
+              <option value="apikey">API Key</option>
             </select>
           </div>
 
@@ -205,6 +206,56 @@ function RequestEditor() {
                     setAuth({
                       ...auth,
                       password: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </>
+          )}
+          {auth.type === "apikey" && (
+            <>
+              <div>
+                <label>Location</label>
+
+                <select
+                  value={auth.apiLocation}
+                  onChange={(e) =>
+                    setAuth({
+                      ...auth,
+                      apiLocation: e.target.value,
+                    })
+                  }
+                >
+                  <option value="header">Header</option>
+                  <option value="query">Query Param</option>
+                </select>
+              </div>
+
+              <div>
+                <label>Key</label>
+
+                <input
+                  type="text"
+                  value={auth.apiKey}
+                  onChange={(e) =>
+                    setAuth({
+                      ...auth,
+                      apiKey: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div>
+                <label>Value</label>
+
+                <input
+                  type="text"
+                  value={auth.apiValue}
+                  onChange={(e) =>
+                    setAuth({
+                      ...auth,
+                      apiValue: e.target.value,
                     })
                   }
                 />

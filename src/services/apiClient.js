@@ -26,6 +26,16 @@ const apiClient = async ({ method, url, params, headers, body, auth }) => {
       "Basic " + btoa(`${auth.username}:${auth.password}`);
   }
 
+  if (auth.type === "apikey") {
+    if (auth.apiLocation === "header") {
+      requestHeaders[auth.apiKey] = auth.apiValue;
+    }
+
+    if (auth.apiLocation === "query") {
+      queryParams[auth.apiKey] = auth.apiValue;
+    }
+  }
+
   let requestBody;
 
   if (body.trim()) {

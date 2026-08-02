@@ -21,6 +21,11 @@ const apiClient = async ({ method, url, params, headers, body, auth }) => {
     requestHeaders.Authorization = `Bearer ${auth.token}`;
   }
 
+  if (auth.type === "basic") {
+    requestHeaders.Authorization =
+      "Basic " + btoa(`${auth.username}:${auth.password}`);
+  }
+
   let requestBody;
 
   if (body.trim()) {

@@ -15,6 +15,8 @@ const useRequestStore = create((set) => ({
   auth: {
     type: "none",
     token: "",
+    username: "",
+    password: "",
   },
 
   setMethod: (method) => set({ method }),

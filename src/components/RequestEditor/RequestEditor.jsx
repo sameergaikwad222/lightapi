@@ -157,6 +157,7 @@ function RequestEditor() {
             >
               <option value="none">None</option>
               <option value="bearer">Bearer Token</option>
+              <option value="basic">Basic Auth</option>
             </select>
           </div>
 
@@ -176,6 +177,39 @@ function RequestEditor() {
                 }
               />
             </div>
+          )}
+          {auth.type === "basic" && (
+            <>
+              <div>
+                <label>Username</label>
+
+                <input
+                  type="text"
+                  value={auth.username}
+                  onChange={(e) =>
+                    setAuth({
+                      ...auth,
+                      username: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div>
+                <label>Password</label>
+
+                <input
+                  type="password"
+                  value={auth.password}
+                  onChange={(e) =>
+                    setAuth({
+                      ...auth,
+                      password: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </>
           )}
         </>
       )}

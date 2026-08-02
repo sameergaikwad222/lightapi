@@ -10,6 +10,7 @@ function RequestBar() {
     body,
     auth,
     loading,
+    addHistory,
     setMethod,
     setUrl,
     setResponse,
@@ -41,8 +42,16 @@ function RequestBar() {
       });
 
       setResponse(response);
+
+      addHistory({
+        id: Date.now(),
+        method,
+        url,
+        status: response.status,
+        time: response.time,
+      });
     } catch (error) {
-      setResponse({
+      const errorResponse = {
         status: error.response?.status || 0,
         statusText: error.response?.statusText || "Request Failed",
         headers: error.response?.headers || {},
@@ -50,6 +59,16 @@ function RequestBar() {
           message: error.message,
         },
         time: 0,
+      };
+
+      setResponse(errorResponse);
+
+      addHistory({
+        id: Date.now(),
+        method,
+        url,
+        status: errorResponse.status,
+        time: errorResponse.time,
       });
     } finally {
       setLoading(false);

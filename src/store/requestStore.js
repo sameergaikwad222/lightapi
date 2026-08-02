@@ -22,18 +22,22 @@ const useRequestStore = create((set) => ({
     apiLocation: "header",
   },
 
+  history: [],
+
   setMethod: (method) => set({ method }),
   setUrl: (url) => set({ url }),
   setResponse: (response) => set({ response }),
   setLoading: (loading) => set({ loading }),
-
   setActiveTab: (activeTab) => set({ activeTab }),
-
   setParams: (params) => set({ params }),
   setHeaders: (headers) => set({ headers }),
   setBody: (body) => set({ body }),
-
   setAuth: (auth) => set({ auth }),
+
+  addHistory: (request) =>
+    set((state) => ({
+      history: [request, ...state.history],
+    })),
 }));
 
 export default useRequestStore;

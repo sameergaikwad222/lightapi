@@ -97,7 +97,6 @@ function RequestBar() {
       body,
       auth,
     });
-    console.log(`showSaveModal: ${showSaveModal}`);
     setShowSaveModal(false);
   };
 
@@ -117,7 +116,7 @@ function RequestBar() {
 
       <input
         type="text"
-        placeholder="https://api.example.com/users"
+        placeholder="Enter API URL..."
         value={url}
         onChange={(e) => setUrl(e.target.value)}
         disabled={loading}

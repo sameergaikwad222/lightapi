@@ -1,19 +1,24 @@
 import useRequestStore from "../../store/requestStore";
 
+const tabs = [
+  { id: "params", label: "Params" },
+  { id: "headers", label: "Headers" },
+  { id: "body", label: "Body" },
+  { id: "auth", label: "Auth" },
+];
+
 function RequestTabs() {
   const { activeTab, setActiveTab } = useRequestStore();
-
-  const tabs = ["params", "headers", "body", "auth"];
 
   return (
     <div className="request-tabs">
       {tabs.map((tab) => (
         <button
-          key={tab}
-          onClick={() => setActiveTab(tab)}
-          className={activeTab === tab ? "active" : ""}
+          key={tab.id}
+          className={activeTab === tab.id ? "active" : ""}
+          onClick={() => setActiveTab(tab.id)}
         >
-          {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          {tab.label}
         </button>
       ))}
     </div>

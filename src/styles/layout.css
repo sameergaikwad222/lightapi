@@ -1,3 +1,5 @@
+@import "./variables.css";
+
 * {
   box-sizing: border-box;
 }
@@ -9,10 +11,18 @@ body,
   overflow: hidden;
 }
 
-body {
-  font-family: system-ui, sans-serif;
-  background: #111827;
-  color: #f3f4f6;
+body{
+    background: var(--bg-primary);
+    color: var(--text-primary);
+
+    font-family:
+        Inter,
+        system-ui,
+        sans-serif;
+
+    font-size:14px;
+
+    line-height:1.5;
 }
 
 .app {

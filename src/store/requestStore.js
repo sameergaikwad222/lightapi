@@ -6,6 +6,8 @@ const useRequestStore = create((set) => ({
   response: null,
   loading: false,
 
+  activeTab: "params",
+
   params: [],
   headers: [],
   body: "",
@@ -14,6 +16,8 @@ const useRequestStore = create((set) => ({
   setUrl: (url) => set({ url }),
   setResponse: (response) => set({ response }),
   setLoading: (loading) => set({ loading }),
+
+  setActiveTab: (activeTab) => set({ activeTab }),
 
   setParams: (params) => set({ params }),
   setHeaders: (headers) => set({ headers }),

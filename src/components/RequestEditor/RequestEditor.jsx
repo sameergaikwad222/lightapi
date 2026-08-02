@@ -3,6 +3,7 @@ import useRequestStore from "../../store/requestStore";
 
 function RequestEditor() {
   const {
+    activeTab,
     params,
     headers,
     body,
@@ -57,76 +58,91 @@ function RequestEditor() {
 
   return (
     <div className="request-editor">
-      <h3>Query Params</h3>
+      {activeTab === "params" && (
+        <>
+          <h3>Query Params</h3>
 
-      <div>
-        <input
-          type="text"
-          placeholder="Key"
-          value={paramKey}
-          onChange={(e) => setParamKey(e.target.value)}
-        />
+          <div>
+            <input
+              type="text"
+              placeholder="Key"
+              value={paramKey}
+              onChange={(e) => setParamKey(e.target.value)}
+            />
 
-        <input
-          type="text"
-          placeholder="Value"
-          value={paramValue}
-          onChange={(e) => setParamValue(e.target.value)}
-        />
+            <input
+              type="text"
+              placeholder="Value"
+              value={paramValue}
+              onChange={(e) => setParamValue(e.target.value)}
+            />
 
-        <button onClick={addParam}>Add</button>
-      </div>
+            <button onClick={addParam}>Add</button>
+          </div>
 
-      <ul>
-        {params.map((param, index) => (
-          <li key={index}>
-            {param.key} = {param.value}
-            <button onClick={() => removeParam(index)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+          <ul>
+            {params.map((param, index) => (
+              <li key={index}>
+                {param.key} = {param.value}
+                <button onClick={() => removeParam(index)}>Delete</button>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
 
-      <hr />
+      {activeTab === "headers" && (
+        <>
+          <h3>Headers</h3>
 
-      <h3>Headers</h3>
+          <div>
+            <input
+              type="text"
+              placeholder="Header"
+              value={headerKey}
+              onChange={(e) => setHeaderKey(e.target.value)}
+            />
 
-      <div>
-        <input
-          type="text"
-          placeholder="Header"
-          value={headerKey}
-          onChange={(e) => setHeaderKey(e.target.value)}
-        />
+            <input
+              type="text"
+              placeholder="Value"
+              value={headerValue}
+              onChange={(e) => setHeaderValue(e.target.value)}
+            />
 
-        <input
-          type="text"
-          placeholder="Value"
-          value={headerValue}
-          onChange={(e) => setHeaderValue(e.target.value)}
-        />
+            <button onClick={addHeader}>Add</button>
+          </div>
 
-        <button onClick={addHeader}>Add</button>
-      </div>
+          <ul>
+            {headers.map((header, index) => (
+              <li key={index}>
+                {header.key} = {header.value}
+                <button onClick={() => removeHeader(index)}>Delete</button>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
 
-      <ul>
-        {headers.map((header, index) => (
-          <li key={index}>
-            {header.key} = {header.value}
-            <button onClick={() => removeHeader(index)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+      {activeTab === "body" && (
+        <>
+          <h3>Request Body (JSON)</h3>
 
-      <hr />
+          <textarea
+            rows={12}
+            placeholder='{"name":"John"}'
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+          />
+        </>
+      )}
 
-      <h3>Request Body (JSON)</h3>
-
-      <textarea
-        rows={10}
-        placeholder='{"name":"John"}'
-        value={body}
-        onChange={(e) => setBody(e.target.value)}
-      />
+      {activeTab === "auth" && (
+        <>
+          <h3>Authentication</h3>
+          <p>Coming Soon...</p>
+        </>
+      )}
     </div>
   );
 }

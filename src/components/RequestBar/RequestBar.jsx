@@ -106,6 +106,7 @@ function RequestBar() {
   return (
     <div className="request-bar">
       <select
+        className="method-select"
         value={method}
         onChange={(e) => setMethod(e.target.value)}
         disabled={loading}
@@ -118,8 +119,9 @@ function RequestBar() {
       </select>
 
       <Input
+        className="url-input"
         type="text"
-        placeholder="Enter API URL..."
+        placeholder="Enter request URL..."
         value={url}
         onChange={(e) => setUrl(e.target.value)}
         disabled={loading}
@@ -128,7 +130,6 @@ function RequestBar() {
       <>
         <Button onClick={handleSend} disabled={loading}>
           <Send size={16} />
-
           {loading ? "Sending..." : "Send"}
         </Button>
 

@@ -1,0 +1,69 @@
+/* ==========================================
+   REQUEST BAR
+========================================== */
+
+.request-bar {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 16px 20px;
+
+    background: var(--bg-secondary);
+
+    border-bottom: 1px solid var(--border);
+
+    flex-shrink: 0;
+}
+
+/* ==========================================
+   METHOD SELECT
+========================================== */
+
+.method-select {
+    width: 110px;
+
+    height: 40px;
+
+    padding: 0 12px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 10px;
+
+    background: var(--bg-panel);
+
+    color: var(--text-primary);
+
+    outline: none;
+
+    cursor: pointer;
+
+    transition: all .2s ease;
+}
+
+.method-select:focus {
+    border-color: var(--primary);
+
+    box-shadow: 0 0 0 3px rgba(59,130,246,.2);
+}
+
+/* ==========================================
+   URL INPUT
+========================================== */
+
+.url-input {
+    flex: 1;
+
+    min-width: 0;
+}
+
+/* ==========================================
+   BUTTON GROUP
+========================================== */
+
+.request-bar .btn {
+    flex-shrink: 0;
+}

@@ -1,0 +1,70 @@
+/* ==========================================
+   REQUEST TABS
+========================================== */
+
+.request-tabs {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 10px 16px;
+
+    background: var(--bg-secondary);
+
+    border-bottom: 1px solid var(--border);
+
+    flex-shrink: 0;
+}
+
+/* ==========================================
+   TAB BUTTONS
+========================================== */
+
+.request-tabs button {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 72px;
+
+    padding: 8px 16px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: var(--text-secondary);
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    transition:
+        background-color .2s ease,
+        color .2s ease,
+        transform .15s ease;
+}
+
+.request-tabs button:hover {
+    background: var(--bg-hover);
+
+    color: var(--text-primary);
+}
+
+.request-tabs button.active {
+    background: var(--primary);
+
+    color: white;
+}
+
+.request-tabs button:active {
+    transform: scale(0.98);
+}

@@ -5,8 +5,10 @@ function RequestEditor() {
   const {
     params,
     headers,
+    body,
     setParams,
     setHeaders,
+    setBody,
   } = useRequestStore();
 
   const [paramKey, setParamKey] = useState("");
@@ -114,6 +116,17 @@ function RequestEditor() {
           </li>
         ))}
       </ul>
+
+      <hr />
+
+      <h3>Request Body (JSON)</h3>
+
+      <textarea
+        rows={10}
+        placeholder='{"name":"John"}'
+        value={body}
+        onChange={(e) => setBody(e.target.value)}
+      />
     </div>
   );
 }

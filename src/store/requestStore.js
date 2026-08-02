@@ -8,6 +8,7 @@ const useRequestStore = create((set) => ({
 
   params: [],
   headers: [],
+  body: "",
 
   setMethod: (method) => set({ method }),
   setUrl: (url) => set({ url }),
@@ -16,6 +17,7 @@ const useRequestStore = create((set) => ({
 
   setParams: (params) => set({ params }),
   setHeaders: (headers) => set({ headers }),
+  setBody: (body) => set({ body }),
 }));
 
 export default useRequestStore;

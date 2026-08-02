@@ -7,6 +7,7 @@ const {
   url,
   params,
   headers,
+  body,
   loading,
   setMethod,
   setUrl,
@@ -20,7 +21,7 @@ const {
     setLoading(true);
 
     try {
-      const response = await apiClient({ method, url, params, headers });
+      const response = await apiClient({ method, url, params, headers, body });
       setResponse(response);
     } catch (error) {
       setResponse({

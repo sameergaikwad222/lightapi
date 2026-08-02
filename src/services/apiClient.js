@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const apiClient = async ({ method, url, params, headers }) => {
+const apiClient = async ({ method, url, params, headers, body }) => {
   const startTime = performance.now();
 
   const queryParams = {};
@@ -17,11 +17,18 @@ const apiClient = async ({ method, url, params, headers }) => {
     }
   });
 
+  let requestBody;
+
+  if (body.trim()) {
+    requestBody = JSON.parse(body);
+  }
+
   const response = await axios({
     method,
     url,
     params: queryParams,
     headers: requestHeaders,
+    data: requestBody,
   });
 
   const endTime = performance.now();

@@ -1,13 +1,19 @@
 import axios from "axios";
 
-const apiClient = async ({ method, url, params }) => {
+const apiClient = async ({ method, url, params, headers }) => {
   const startTime = performance.now();
 
   const queryParams = {};
-
   params.forEach((param) => {
     if (param.key.trim()) {
       queryParams[param.key] = param.value;
+    }
+  });
+
+  const requestHeaders = {};
+  headers.forEach((header) => {
+    if (header.key.trim()) {
+      requestHeaders[header.key] = header.value;
     }
   });
 
@@ -15,6 +21,7 @@ const apiClient = async ({ method, url, params }) => {
     method,
     url,
     params: queryParams,
+    headers: requestHeaders,
   });
 
   const endTime = performance.now();

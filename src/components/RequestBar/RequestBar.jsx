@@ -2,16 +2,17 @@ import apiClient from "../../services/apiClient";
 import useRequestStore from "../../store/requestStore";
 
 function RequestBar() {
-  const {
-    method,
-    url,
-    params,
-    loading,
-    setMethod,
-    setUrl,
-    setResponse,
-    setLoading,
-  } = useRequestStore();
+const {
+  method,
+  url,
+  params,
+  headers,
+  loading,
+  setMethod,
+  setUrl,
+  setResponse,
+  setLoading,
+} = useRequestStore();
 
   const handleSend = async () => {
     if (!url.trim() || loading) return;
@@ -19,7 +20,7 @@ function RequestBar() {
     setLoading(true);
 
     try {
-      const response = await apiClient({ method, url, params });
+      const response = await apiClient({ method, url, params, headers });
       setResponse(response);
     } catch (error) {
       setResponse({

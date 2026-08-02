@@ -21,7 +21,13 @@ function ResponseViewer() {
         <strong>Time:</strong> {response.time} ms
       </p>
 
-      <pre>
+      <pre
+        style={{
+          whiteSpace: "pre-wrap",
+          wordBreak: "break-word",
+          overflowX: "auto",
+        }}
+      >
         {JSON.stringify(response.data, null, 2)}
       </pre>
     </div>

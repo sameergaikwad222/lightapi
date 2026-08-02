@@ -73,7 +73,18 @@ body {
   border-bottom: 1px solid #374151;
 }
 
+ 
+
 .response-viewer {
   height: 280px;
   padding: 20px;
+  overflow: auto;
+}
+
+.response-viewer pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+  font-size: 14px;
+  line-height: 1.5;
 }

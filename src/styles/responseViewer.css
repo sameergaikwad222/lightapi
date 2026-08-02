@@ -329,3 +329,51 @@
     gap: 10px;
 
 }
+
+/* ==========================================
+   REACT18 JSON VIEW
+========================================== */
+
+.response-content .json-view-container {
+
+    background: transparent !important;
+
+    border: none !important;
+
+    font-family: "JetBrains Mono", monospace;
+
+    font-size: 13px;
+
+    padding: 8px;
+
+}
+
+.response-content .json-view {
+
+    background: transparent !important;
+
+}
+
+.response-content .json-view .object-key {
+
+    color: #61afef;
+
+}
+
+.response-content .json-view .string {
+
+    color: #98c379;
+
+}
+
+.response-content .json-view .number {
+
+    color: #d19a66;
+
+}
+
+.response-content .json-view .boolean {
+
+    color: #c678dd;
+
+}

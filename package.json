@@ -15,8 +15,8 @@
     "lucide-react": "^1.28.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-json-view-lite": "^2.5.0",
     "react-resizable-panels": "^3.0.6",
+    "react18-json-view": "^0.2.10",
     "zustand": "^5.0.14"
   },
   "devDependencies": {

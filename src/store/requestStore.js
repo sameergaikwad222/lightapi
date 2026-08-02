@@ -66,7 +66,14 @@ const useRequestStore = create((set) => ({
 
       return { collections };
     }),
+  deleteCollection: (id) =>
+    set((state) => {
+      const collections = state.collections.filter((item) => item.id !== id);
 
+      saveCollections(collections);
+
+      return { collections };
+    }),
   loadCollection: (request) =>
     set({
       method: request.method,

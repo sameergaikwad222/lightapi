@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { loadHistory, saveHistory } from "../utils/storage";
 
 const useRequestStore = create((set) => ({
   method: "GET",
@@ -22,7 +23,7 @@ const useRequestStore = create((set) => ({
     apiLocation: "header",
   },
 
-  history: [],
+  history: loadHistory(),
 
   setMethod: (method) => set({ method }),
   setUrl: (url) => set({ url }),
@@ -35,9 +36,13 @@ const useRequestStore = create((set) => ({
   setAuth: (auth) => set({ auth }),
 
   addHistory: (request) =>
-    set((state) => ({
-      history: [request, ...state.history],
-    })),
+    set((state) => {
+      const history = [request, ...state.history];
+
+      saveHistory(history);
+
+      return { history };
+    }),
   loadRequest: (request) =>
     set({
       method: request.method,

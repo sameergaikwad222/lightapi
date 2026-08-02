@@ -13,52 +13,32 @@ function Sidebar() {
     <aside className="sidebar">
       <h3>Collections</h3>
 
-      {collections.length === 0 ? (
-        <p>No saved requests.</p>
-      ) : (
-        <ul>
-          {collections.map((item) => (
-            <li
-              key={item.id}
-              style={{
-                marginBottom: "10px",
-                padding: "8px",
-                border: "1px solid #374151",
-                borderRadius: "6px",
-              }}
-            >
-              <div
-                onClick={() => loadCollection(item)}
-                style={{ cursor: "pointer" }}
-              >
-                <strong>{item.name}</strong>
+      <h3 className="sidebar-title">Collections</h3>
 
-                <div
-                  style={{
-                    fontSize: "12px",
-                    marginTop: "4px",
-                  }}
-                >
+      {collections.length === 0 ? (
+        <p className="empty-text">No saved requests.</p>
+      ) : (
+        <ul className="sidebar-list">
+          {collections.map((item) => (
+            <li key={item.id} className="sidebar-card">
+              <div
+                className="sidebar-card-content"
+                onClick={() => loadCollection(item)}
+              >
+                <div className={`method-badge ${item.method.toLowerCase()}`}>
                   {item.method}
                 </div>
 
-                <div
-                  style={{
-                    fontSize: "12px",
-                    wordBreak: "break-all",
-                  }}
-                >
-                  {item.url}
-                </div>
+                <h4>{item.name}</h4>
+
+                <p>{item.url}</p>
               </div>
 
               <button
-                style={{
-                  marginTop: "8px",
-                }}
+                className="delete-btn"
                 onClick={() => deleteCollection(item.id)}
               >
-                🗑 Delete
+                Delete
               </button>
             </li>
           ))}
@@ -67,45 +47,25 @@ function Sidebar() {
 
       <hr style={{ margin: "20px 0" }} />
 
-      <h3>History</h3>
+      <h3 className="sidebar-title">History</h3>
 
       {history.length === 0 ? (
-        <p>No requests yet.</p>
+        <p className="empty-text">No requests yet.</p>
       ) : (
-        <ul>
+        <ul className="sidebar-list">
           {history.map((item) => (
             <li
               key={item.id}
+              className="sidebar-card"
               onClick={() => loadRequest(item)}
-              style={{
-                marginBottom: "10px",
-                padding: "8px",
-                border: "1px solid #374151",
-                borderRadius: "6px",
-                cursor: "pointer",
-              }}
             >
-              <div>
-                <strong>{item.method}</strong>
+              <div className={`method-badge ${item.method.toLowerCase()}`}>
+                {item.method}
               </div>
 
-              <div
-                style={{
-                  fontSize: "12px",
-                  wordBreak: "break-all",
-                }}
-              >
-                {item.url}
-              </div>
+              <p>{item.url}</p>
 
-              <div
-                style={{
-                  fontSize: "12px",
-                  marginTop: "4px",
-                }}
-              >
-                Status: {item.status}
-              </div>
+              <span className="status-text">Status {item.status}</span>
             </li>
           ))}
         </ul>

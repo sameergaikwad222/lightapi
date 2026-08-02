@@ -40,6 +40,7 @@ const useRequestStore = create((set) => ({
   setHeaders: (headers) => set({ headers }),
   setBody: (body) => set({ body }),
   setAuth: (auth) => set({ auth }),
+  activeResponseTab: "body",
 
   addHistory: (request) =>
     set((state) => {
@@ -83,6 +84,7 @@ const useRequestStore = create((set) => ({
       body: request.body,
       auth: request.auth,
     }),
+  setActiveResponseTab: (tab) => set({ activeResponseTab: tab }),
 }));
 
 export default useRequestStore;

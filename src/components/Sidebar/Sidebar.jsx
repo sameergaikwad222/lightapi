@@ -6,6 +6,7 @@ function Sidebar() {
     collections,
     loadRequest,
     loadCollection,
+    deleteCollection,
   } = useRequestStore();
 
   return (
@@ -19,36 +20,46 @@ function Sidebar() {
           {collections.map((item) => (
             <li
               key={item.id}
-              onClick={() => loadCollection(item)}
               style={{
                 marginBottom: "10px",
                 padding: "8px",
                 border: "1px solid #374151",
                 borderRadius: "6px",
-                cursor: "pointer",
               }}
             >
-              <div>
+              <div
+                onClick={() => loadCollection(item)}
+                style={{ cursor: "pointer" }}
+              >
                 <strong>{item.name}</strong>
+
+                <div
+                  style={{
+                    fontSize: "12px",
+                    marginTop: "4px",
+                  }}
+                >
+                  {item.method}
+                </div>
+
+                <div
+                  style={{
+                    fontSize: "12px",
+                    wordBreak: "break-all",
+                  }}
+                >
+                  {item.url}
+                </div>
               </div>
 
-              <div
+              <button
                 style={{
-                  fontSize: "12px",
-                  marginTop: "4px",
+                  marginTop: "8px",
                 }}
+                onClick={() => deleteCollection(item.id)}
               >
-                {item.method}
-              </div>
-
-              <div
-                style={{
-                  fontSize: "12px",
-                  wordBreak: "break-all",
-                }}
-              >
-                {item.url}
-              </div>
+                🗑 Delete
+              </button>
             </li>
           ))}
         </ul>

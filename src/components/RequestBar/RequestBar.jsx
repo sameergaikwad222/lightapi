@@ -1,5 +1,7 @@
 import apiClient from "../../services/apiClient";
 import useRequestStore from "../../store/requestStore";
+import { useState } from "react";
+import SaveRequestModal from "../SaveRequestModal/SaveRequestModal";
 
 function RequestBar() {
   const {
@@ -17,7 +19,7 @@ function RequestBar() {
     setResponse,
     setLoading,
   } = useRequestStore();
-
+  const [showSaveModal, setShowSaveModal] = useState(false);
   const handleSend = async () => {
     if (!url.trim() || loading) return;
 
@@ -84,13 +86,7 @@ function RequestBar() {
     }
   };
 
-  const handleSave = () => {
-    if (!url.trim()) return;
-
-    const name = prompt("Enter Request Name");
-
-    if (!name) return;
-
+  const handleSave = (name) => {
     addCollection({
       id: Date.now(),
       name,
@@ -101,8 +97,8 @@ function RequestBar() {
       body,
       auth,
     });
-
-    alert("Request saved successfully.");
+    console.log(`showSaveModal: ${showSaveModal}`);
+    setShowSaveModal(false);
   };
 
   return (
@@ -132,7 +128,12 @@ function RequestBar() {
           {loading ? "Sending..." : "Send"}
         </button>
 
-        <button onClick={handleSave}>Save</button>
+        <button onClick={() => setShowSaveModal(true)}>Save</button>
+        <SaveRequestModal
+          isOpen={showSaveModal}
+          onClose={() => setShowSaveModal(false)}
+          onSave={handleSave}
+        />
       </>
     </div>
   );

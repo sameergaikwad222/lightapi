@@ -5,6 +5,7 @@ function RequestBar() {
   const {
     method,
     url,
+    params,
     loading,
     setMethod,
     setUrl,
@@ -18,7 +19,7 @@ function RequestBar() {
     setLoading(true);
 
     try {
-      const response = await apiClient({ method, url });
+      const response = await apiClient({ method, url, params });
       setResponse(response);
     } catch (error) {
       setResponse({

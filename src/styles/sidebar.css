@@ -311,3 +311,39 @@
     font-size:13px;
 
 }
+
+/* ==========================================
+   COLLAPSIBLE SECTIONS
+========================================== */
+
+.section-toggle{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    background:none;
+
+    border:none;
+
+    color:var(--text-secondary);
+
+    font-size:13px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    text-transform:uppercase;
+
+    letter-spacing:.5px;
+
+}
+
+.section-toggle:hover{
+
+    color:var(--text-primary);
+
+}

@@ -47,6 +47,10 @@ function RequestBar() {
         id: Date.now(),
         method,
         url,
+        params,
+        headers,
+        body,
+        auth,
         status: response.status,
         time: response.time,
       });
@@ -67,6 +71,10 @@ function RequestBar() {
         id: Date.now(),
         method,
         url,
+        params,
+        headers,
+        body,
+        auth,
         status: errorResponse.status,
         time: errorResponse.time,
       });

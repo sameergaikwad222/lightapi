@@ -38,6 +38,15 @@ const useRequestStore = create((set) => ({
     set((state) => ({
       history: [request, ...state.history],
     })),
+  loadRequest: (request) =>
+    set({
+      method: request.method,
+      url: request.url,
+      params: request.params,
+      headers: request.headers,
+      body: request.body,
+      auth: request.auth,
+    }),
 }));
 
 export default useRequestStore;

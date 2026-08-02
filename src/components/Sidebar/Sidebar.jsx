@@ -1,7 +1,7 @@
 import useRequestStore from "../../store/requestStore";
 
 function Sidebar() {
-  const { history } = useRequestStore();
+  const { history, loadRequest } = useRequestStore();
 
   return (
     <aside className="sidebar">
@@ -14,11 +14,13 @@ function Sidebar() {
           {history.map((item) => (
             <li
               key={item.id}
+              onClick={() => loadRequest(item)}
               style={{
                 marginBottom: "10px",
                 padding: "8px",
                 border: "1px solid #374151",
                 borderRadius: "6px",
+                cursor: "pointer",
               }}
             >
               <div>

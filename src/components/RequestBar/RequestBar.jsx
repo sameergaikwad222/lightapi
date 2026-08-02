@@ -2,6 +2,9 @@ import apiClient from "../../services/apiClient";
 import useRequestStore from "../../store/requestStore";
 import { useState } from "react";
 import SaveRequestModal from "../SaveRequestModal/SaveRequestModal";
+import Button from "../ui/Button/Button";
+import Input from "../ui/Input/Input";
+import { Send, Save } from "lucide-react";
 
 function RequestBar() {
   const {
@@ -114,7 +117,7 @@ function RequestBar() {
         <option value="DELETE">DELETE</option>
       </select>
 
-      <input
+      <Input
         type="text"
         placeholder="Enter API URL..."
         value={url}
@@ -123,11 +126,16 @@ function RequestBar() {
       />
 
       <>
-        <button onClick={handleSend} disabled={loading}>
-          {loading ? "Sending..." : "Send"}
-        </button>
+        <Button onClick={handleSend} disabled={loading}>
+          <Send size={16} />
 
-        <button onClick={() => setShowSaveModal(true)}>Save</button>
+          {loading ? "Sending..." : "Send"}
+        </Button>
+
+        <Button variant="secondary" onClick={() => setShowSaveModal(true)}>
+          <Save size={16} />
+          Save
+        </Button>
         <SaveRequestModal
           isOpen={showSaveModal}
           onClose={() => setShowSaveModal(false)}

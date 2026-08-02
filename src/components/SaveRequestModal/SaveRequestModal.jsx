@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import Input from "../ui/Input/Input";
 function SaveRequestModal({ isOpen, onClose, onSave }) {
   const [name, setName] = useState("");
 
@@ -32,7 +32,7 @@ function SaveRequestModal({ isOpen, onClose, onSave }) {
     >
       <h2>Modal Works!</h2>
 
-      <input value={name} onChange={(e) => setName(e.target.value)} />
+      <Input value={name} onChange={(e) => setName(e.target.value)} />
 
       <button onClick={handleSave}>Save</button>
       <button onClick={handleClose}>Cancel</button>

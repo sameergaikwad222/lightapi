@@ -608,3 +608,188 @@ body {
 .json-container * {
     text-align: left;
 }
+
+.editor-table{
+
+    display:flex;
+
+    flex-direction:column;
+
+    width:100%;
+}
+
+.table-header{
+
+    display:grid;
+
+    grid-template-columns:
+        50px
+        1fr
+        1fr
+        60px;
+
+    padding:12px 16px;
+
+    color:var(--text-secondary);
+
+    font-size:13px;
+
+    border-bottom:1px solid var(--border);
+}
+
+.table-row{
+
+    display:grid;
+
+    grid-template-columns:
+        50px
+        1fr
+        1fr
+        60px;
+
+    gap:12px;
+
+    align-items:center;
+
+    padding:12px 16px;
+
+    border-bottom:1px solid var(--border);
+}
+
+.table-row:hover{
+
+    background:rgba(255,255,255,.03);
+}
+
+.table-row input{
+
+    width:100%;
+
+    height:36px;
+
+    background:transparent;
+
+    border:none;
+
+    color:var(--text-primary);
+
+    outline:none;
+}
+
+.icon-btn{
+
+    width:36px;
+    height:36px;
+
+    border:none;
+
+    background:transparent;
+
+    cursor:pointer;
+
+    border-radius:8px;
+}
+
+.icon-btn:hover{
+
+    background:#334155;
+}
+
+.table-footer{
+
+    padding:16px;
+
+    border-top:1px solid var(--border);
+
+    display:flex;
+
+    justify-content:flex-start;
+}
+
+.table-row,
+.table-header{
+
+grid-template-columns:
+
+40px
+300px
+1fr
+50px;
+
+}
+
+.editor-list {
+    list-style: none;
+
+    margin: 16px 0 0;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.editor-list li {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr auto;
+
+    gap: 16px;
+
+    align-items: center;
+
+    padding: 12px 16px;
+
+    background: var(--bg-panel);
+
+    border: 1px solid var(--border);
+
+    border-radius: 10px;
+}
+
+.editor-list span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.body-editor {
+  width: 100%;
+  height: 100%;
+
+  min-height: 400px;
+
+  padding: 16px;
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  background: var(--bg-panel);
+
+  color: var(--text-primary);
+
+  resize: vertical;
+
+  outline: none;
+
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.body-editor:focus {
+  border-color: var(--primary);
+}
+
+.auth-group{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin-bottom:20px;
+}
+
+.auth-group label{
+    font-size:14px;
+    font-weight:600;
+    color:var(--text-secondary);
+}

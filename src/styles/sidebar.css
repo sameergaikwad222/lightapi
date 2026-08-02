@@ -3,23 +3,57 @@
 ========================================== */
 
 .sidebar {
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+
     background: var(--bg-secondary);
 
     border-right: 1px solid var(--border);
 
-    padding: 20px;
-
     overflow-y: auto;
+
+    padding: 12px;
 }
 
-.sidebar-title {
-    margin-bottom: 18px;
+/* ==========================================
+   SECTION
+========================================== */
 
-    font-size: 18px;
+.sidebar-section {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.sidebar-divider {
+    margin: 12px 0;
+
+    border-top: 1px solid var(--border);
+}
+
+.sidebar-section-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 4px 2px;
+}
+
+.sidebar-section-header h3 {
+    font-size: 13px;
 
     font-weight: 700;
 
-    color: var(--text-primary);
+    color: var(--text-secondary);
+
+    text-transform: uppercase;
+
+    letter-spacing: .6px;
 }
 
 /* ==========================================
@@ -29,163 +63,251 @@
 .sidebar-list {
     list-style: none;
 
+    margin: 0;
+
+    padding: 0;
+
     display: flex;
 
     flex-direction: column;
 
-    gap: 14px;
-
-    padding: 0;
-
-    margin: 0;
+    gap: 2px;
 }
 
 /* ==========================================
-   CARD
+   ITEM
 ========================================== */
 
-.sidebar-card {
-    background: var(--bg-panel);
-
-    border: 1px solid var(--border);
-
-    border-radius: 12px;
-
-    padding: 14px;
-
-    cursor: pointer;
-
-    transition:
-        border-color .2s ease,
-        transform .2s ease,
-        box-shadow .2s ease;
-}
-
-.sidebar-card:hover {
-    border-color: var(--primary);
-
-    transform: translateY(-2px);
-
-    box-shadow: 0 8px 20px rgba(0,0,0,.18);
-}
-
-.sidebar-card h4 {
-    margin: 10px 0 8px;
-
-    font-size: 15px;
-
-    color: var(--text-primary);
-}
-
-.sidebar-card p {
-    margin: 0;
-
-    color: var(--text-secondary);
-
-    font-size: 12px;
-
-    word-break: break-word;
-
-    line-height: 1.5;
-}
-
-/* ==========================================
-   METHOD BADGE
-========================================== */
-
-.method-badge {
-    display: inline-flex;
+.sidebar-item {
+    display: flex;
 
     align-items: center;
 
-    justify-content: center;
+    justify-content: space-between;
 
-    padding: 4px 10px;
+    gap: 8px;
 
-    border-radius: 999px;
+    min-height: 34px;
+
+    padding: 0 8px;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    transition: background .15s;
+}
+
+.sidebar-item:hover {
+    background: rgba(255,255,255,.05);
+}
+
+.sidebar-item-content {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    flex: 1;
+
+    min-width: 0;
+}
+
+/* ==========================================
+   METHOD
+========================================== */
+
+.method {
+    width: 54px;
+
+    flex-shrink: 0;
 
     font-size: 11px;
 
     font-weight: 700;
 
-    letter-spacing: .5px;
+    text-transform: uppercase;
+
+    letter-spacing: .4px;
 }
 
-.method-badge.get {
-    background: rgba(34,197,94,.18);
+.method-get {
     color: #22c55e;
 }
 
-.method-badge.post {
-    background: rgba(59,130,246,.18);
+.method-post {
     color: #3b82f6;
 }
 
-.method-badge.put {
-    background: rgba(245,158,11,.18);
+.method-put {
     color: #f59e0b;
 }
 
-.method-badge.patch {
-    background: rgba(168,85,247,.18);
+.method-patch {
     color: #a855f7;
 }
 
-.method-badge.delete {
-    background: rgba(239,68,68,.18);
+.method-delete {
     color: #ef4444;
 }
 
 /* ==========================================
-   STATUS
+   REQUEST NAME
 ========================================== */
 
-.status-text {
-    display: block;
+.request-name {
+    flex: 1;
 
-    margin-top: 10px;
+    min-width: 0;
 
-    color: var(--text-secondary);
+    overflow: hidden;
 
-    font-size: 12px;
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+
+    color: var(--text-primary);
+
+    font-size: 13px;
 }
 
 /* ==========================================
-   DELETE BUTTON
+   DELETE
 ========================================== */
 
-.delete-btn {
-    width: 100%;
+.sidebar-delete {
+    display: flex;
 
-    margin-top: 12px;
+    align-items: center;
 
-    padding: 8px;
+    justify-content: center;
 
-    border: 1px solid #ef4444;
+    width: 24px;
 
-    border-radius: 8px;
+    height: 24px;
+
+    border: none;
 
     background: transparent;
 
-    color: #ef4444;
+    color: var(--text-secondary);
+
+    border-radius: 4px;
 
     cursor: pointer;
 
-    transition: .2s;
+    opacity: 0;
+
+    transition: .15s;
 }
 
-.delete-btn:hover {
-    background: #ef4444;
+.sidebar-item:hover .sidebar-delete {
+    opacity: 1;
+}
 
-    color: white;
+.sidebar-delete:hover {
+    color: #ef4444;
+
+    background: rgba(239,68,68,.1);
 }
 
 /* ==========================================
-   EMPTY STATE
+   ICON BUTTON
+========================================== */
+
+.icon-btn {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 28px;
+
+    height: 28px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    background: transparent;
+
+    color: var(--text-secondary);
+
+    cursor: pointer;
+
+    transition: .15s;
+}
+
+.icon-btn:hover {
+    background: rgba(255,255,255,.06);
+
+    color: var(--text-primary);
+}
+
+/* ==========================================
+   EMPTY
 ========================================== */
 
 .empty-text {
+    padding: 8px 4px;
+
     color: var(--text-secondary);
 
     font-size: 13px;
+}
+
+.sidebar-item.active {
+    background: rgba(59,130,246,.18);
+
+    border-left: 3px solid var(--primary);
+}
+
+/* ==========================================
+   SEARCH
+========================================== */
+
+.sidebar-search{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    margin-bottom:14px;
+
+    padding:8px 10px;
+
+    border:1px solid var(--border);
+
+    border-radius:8px;
+
+    background:var(--bg-panel);
+
+}
+
+.sidebar-search svg{
+
+    color:var(--text-secondary);
+
+    flex-shrink:0;
+
+}
+
+.sidebar-search input{
+
+    width:100%;
+
+    background:transparent;
+
+    border:none;
+
+    outline:none;
+
+    color:var(--text-primary);
+
+    font-size:13px;
+
 }

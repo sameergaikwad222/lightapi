@@ -7,9 +7,11 @@ function RequestEditor() {
     params,
     headers,
     body,
+    auth,
     setParams,
     setHeaders,
     setBody,
+    setAuth,
   } = useRequestStore();
 
   const [paramKey, setParamKey] = useState("");
@@ -140,7 +142,41 @@ function RequestEditor() {
       {activeTab === "auth" && (
         <>
           <h3>Authentication</h3>
-          <p>Coming Soon...</p>
+
+          <div>
+            <label>Type</label>
+
+            <select
+              value={auth.type}
+              onChange={(e) =>
+                setAuth({
+                  ...auth,
+                  type: e.target.value,
+                })
+              }
+            >
+              <option value="none">None</option>
+              <option value="bearer">Bearer Token</option>
+            </select>
+          </div>
+
+          {auth.type === "bearer" && (
+            <div>
+              <label>Token</label>
+
+              <input
+                type="text"
+                placeholder="Enter Bearer Token"
+                value={auth.token}
+                onChange={(e) =>
+                  setAuth({
+                    ...auth,
+                    token: e.target.value,
+                  })
+                }
+              />
+            </div>
+          )}
         </>
       )}
     </div>

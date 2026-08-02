@@ -12,6 +12,11 @@ const useRequestStore = create((set) => ({
   headers: [],
   body: "",
 
+  auth: {
+    type: "none",
+    token: "",
+  },
+
   setMethod: (method) => set({ method }),
   setUrl: (url) => set({ url }),
   setResponse: (response) => set({ response }),
@@ -22,6 +27,8 @@ const useRequestStore = create((set) => ({
   setParams: (params) => set({ params }),
   setHeaders: (headers) => set({ headers }),
   setBody: (body) => set({ body }),
+
+  setAuth: (auth) => set({ auth }),
 }));
 
 export default useRequestStore;

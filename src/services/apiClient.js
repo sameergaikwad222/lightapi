@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const apiClient = async ({ method, url, params, headers, body }) => {
+const apiClient = async ({ method, url, params, headers, body, auth }) => {
   const startTime = performance.now();
 
   const queryParams = {};
@@ -16,6 +16,10 @@ const apiClient = async ({ method, url, params, headers, body }) => {
       requestHeaders[header.key] = header.value;
     }
   });
+
+  if (auth.type === "bearer" && auth.token.trim()) {
+    requestHeaders.Authorization = `Bearer ${auth.token}`;
+  }
 
   let requestBody;
 

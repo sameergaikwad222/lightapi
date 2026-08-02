@@ -2,57 +2,59 @@ import apiClient from "../../services/apiClient";
 import useRequestStore from "../../store/requestStore";
 
 function RequestBar() {
-const {
-  method,
-  url,
-  params,
-  headers,
-  body,
-  loading,
-  setMethod,
-  setUrl,
-  setResponse,
-  setLoading,
-} = useRequestStore();
+  const {
+    method,
+    url,
+    params,
+    headers,
+    body,
+    auth,
+    loading,
+    setMethod,
+    setUrl,
+    setResponse,
+    setLoading,
+  } = useRequestStore();
 
-const handleSend = async () => {
-  if (!url.trim() || loading) return;
+  const handleSend = async () => {
+    if (!url.trim() || loading) return;
 
-  try {
-    if (body.trim()) {
-      JSON.parse(body);
+    try {
+      if (body.trim()) {
+        JSON.parse(body);
+      }
+    } catch (err) {
+      alert("Invalid JSON Body", err.message);
+      return;
     }
-  } catch (err) {
-    alert("Invalid JSON Body",err.message);
-    return;
-  }
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    const response = await apiClient({
-      method,
-      url,
-      params,
-      headers,
-      body,
-    });
+    try {
+      const response = await apiClient({
+        method,
+        url,
+        params,
+        headers,
+        body,
+        auth,
+      });
 
-    setResponse(response);
-  } catch (error) {
-    setResponse({
-      status: error.response?.status || 0,
-      statusText: error.response?.statusText || "Request Failed",
-      headers: error.response?.headers || {},
-      data: error.response?.data || {
-        message: error.message,
-      },
-      time: 0,
-    });
-  } finally {
-    setLoading(false);
-  }
-};
+      setResponse(response);
+    } catch (error) {
+      setResponse({
+        status: error.response?.status || 0,
+        statusText: error.response?.statusText || "Request Failed",
+        headers: error.response?.headers || {},
+        data: error.response?.data || {
+          message: error.message,
+        },
+        time: 0,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="request-bar">

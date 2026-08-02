@@ -1,50 +1,76 @@
 import axios from "axios";
+import useRequestStore from "../store/requestStore";
+
+function resolveVariables(value) {
+  if (!value || typeof value !== "string") {
+    return value;
+  }
+
+  const { environment } = useRequestStore.getState();
+
+  return value.replace(/\{\{(.*?)\}\}/g, (_, variable) => {
+    const env = environment.find((item) => item.key.trim() === variable.trim());
+
+    return env ? env.value : `{{${variable}}}`;
+  });
+}
 
 const apiClient = async ({ method, url, params, headers, body, auth }) => {
   const startTime = performance.now();
 
   const queryParams = {};
+
   params.forEach((param) => {
     if (param.key.trim()) {
-      queryParams[param.key] = param.value;
+      queryParams[param.key] = resolveVariables(param.value);
     }
   });
 
   const requestHeaders = {};
+
   headers.forEach((header) => {
     if (header.key.trim()) {
-      requestHeaders[header.key] = header.value;
+      requestHeaders[header.key] = resolveVariables(header.value);
     }
   });
 
   if (auth.type === "bearer" && auth.token.trim()) {
-    requestHeaders.Authorization = `Bearer ${auth.token}`;
+    requestHeaders.Authorization = `Bearer ${resolveVariables(auth.token)}`;
   }
 
   if (auth.type === "basic") {
     requestHeaders.Authorization =
-      "Basic " + btoa(`${auth.username}:${auth.password}`);
+      "Basic " +
+      btoa(
+        `${resolveVariables(auth.username)}:${resolveVariables(auth.password)}`,
+      );
   }
 
   if (auth.type === "apikey") {
     if (auth.apiLocation === "header") {
-      requestHeaders[auth.apiKey] = auth.apiValue;
+      requestHeaders[auth.apiKey] = resolveVariables(auth.apiValue);
     }
 
     if (auth.apiLocation === "query") {
-      queryParams[auth.apiKey] = auth.apiValue;
+      queryParams[auth.apiKey] = resolveVariables(auth.apiValue);
     }
   }
 
   let requestBody;
 
   if (body.trim()) {
-    requestBody = JSON.parse(body);
+    const resolvedBody = resolveVariables(body);
+
+    try {
+      requestBody = JSON.parse(resolvedBody);
+    } catch {
+      requestBody = resolvedBody;
+    }
   }
 
   const response = await axios({
     method,
-    url,
+    url: resolveVariables(url),
     params: queryParams,
     headers: requestHeaders,
     data: requestBody,

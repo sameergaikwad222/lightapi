@@ -1,28 +1,38 @@
 import { create } from "zustand";
+
 import {
   loadHistory,
   saveHistory,
   loadCollections,
   saveCollections,
+  loadEnvironment,
+  saveEnvironment,
 } from "../utils/storage";
 
 const MAX_HISTORY = 100;
 
 const useRequestStore = create((set) => ({
+  /* ==========================================
+     REQUEST
+  ========================================== */
+
   method: "GET",
+
   url: "",
+
   response: null,
+
   loading: false,
 
   activeTab: "params",
+
   activeResponseTab: "body",
 
   params: [],
-  headers: [],
-  body: "",
 
-  selectedHistoryId: null,
-  selectedCollectionId: null,
+  headers: [],
+
+  body: "",
 
   auth: {
     type: "none",
@@ -34,8 +44,27 @@ const useRequestStore = create((set) => ({
     apiLocation: "header",
   },
 
+  /* ==========================================
+     SIDEBAR
+  ========================================== */
+
+  selectedHistoryId: null,
+
+  selectedCollectionId: null,
+
+  /* ==========================================
+     STORAGE
+  ========================================== */
+
   history: loadHistory(),
+
   collections: loadCollections(),
+
+  environment: loadEnvironment(),
+
+  /* ==========================================
+     REQUEST SETTERS
+  ========================================== */
 
   setMethod: (method) => set({ method }),
 
@@ -60,16 +89,40 @@ const useRequestStore = create((set) => ({
       activeResponseTab: tab,
     }),
 
+  /* ==========================================
+     ENVIRONMENT
+  ========================================== */
+
+  setEnvironment: (environment) => {
+    saveEnvironment(environment);
+
+    set({
+      environment,
+    });
+  },
+
+  getEnvironmentValue: (key) => {
+    const vars = loadEnvironment();
+
+    const variable = vars.find((item) => item.key === key);
+
+    return variable ? variable.value : "";
+  },
+
+  /* ==========================================
+     HISTORY
+  ========================================== */
+
   addHistory: (request) =>
     set((state) => {
-      const duplicateIndex = state.history.findIndex(
+      const duplicate = state.history.findIndex(
         (item) => item.method === request.method && item.url === request.url,
       );
 
       let history = [...state.history];
 
-      if (duplicateIndex !== -1) {
-        history.splice(duplicateIndex, 1);
+      if (duplicate !== -1) {
+        history.splice(duplicate, 1);
       }
 
       history.unshift(request);
@@ -104,6 +157,10 @@ const useRequestStore = create((set) => ({
       selectedHistoryId: request.id,
       selectedCollectionId: null,
     }),
+
+  /* ==========================================
+     COLLECTIONS
+  ========================================== */
 
   addCollection: (request) =>
     set((state) => {

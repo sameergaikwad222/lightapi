@@ -11,6 +11,7 @@ function RequestBar() {
     auth,
     loading,
     addHistory,
+    addCollection,
     setMethod,
     setUrl,
     setResponse,
@@ -83,6 +84,27 @@ function RequestBar() {
     }
   };
 
+  const handleSave = () => {
+    if (!url.trim()) return;
+
+    const name = prompt("Enter Request Name");
+
+    if (!name) return;
+
+    addCollection({
+      id: Date.now(),
+      name,
+      method,
+      url,
+      params,
+      headers,
+      body,
+      auth,
+    });
+
+    alert("Request saved successfully.");
+  };
+
   return (
     <div className="request-bar">
       <select
@@ -105,9 +127,13 @@ function RequestBar() {
         disabled={loading}
       />
 
-      <button onClick={handleSend} disabled={loading}>
-        {loading ? "Sending..." : "Send"}
-      </button>
+      <>
+        <button onClick={handleSend} disabled={loading}>
+          {loading ? "Sending..." : "Send"}
+        </button>
+
+        <button onClick={handleSave}>Save</button>
+      </>
     </div>
   );
 }

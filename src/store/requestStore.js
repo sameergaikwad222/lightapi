@@ -1,5 +1,10 @@
 import { create } from "zustand";
-import { loadHistory, saveHistory } from "../utils/storage";
+import {
+  loadHistory,
+  saveHistory,
+  loadCollections,
+  saveCollections,
+} from "../utils/storage";
 
 const useRequestStore = create((set) => ({
   method: "GET",
@@ -24,6 +29,7 @@ const useRequestStore = create((set) => ({
   },
 
   history: loadHistory(),
+  collections: loadCollections(),
 
   setMethod: (method) => set({ method }),
   setUrl: (url) => set({ url }),
@@ -44,6 +50,24 @@ const useRequestStore = create((set) => ({
       return { history };
     }),
   loadRequest: (request) =>
+    set({
+      method: request.method,
+      url: request.url,
+      params: request.params,
+      headers: request.headers,
+      body: request.body,
+      auth: request.auth,
+    }),
+  addCollection: (request) =>
+    set((state) => {
+      const collections = [...state.collections, request];
+
+      saveCollections(collections);
+
+      return { collections };
+    }),
+
+  loadCollection: (request) =>
     set({
       method: request.method,
       url: request.url,

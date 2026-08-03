@@ -1,0 +1,77 @@
+/* ==========================================
+   MODAL OVERLAY
+========================================== */
+
+.modal-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    backdrop-filter: blur(4px);
+
+    z-index: 999;
+}
+
+/* ==========================================
+   MODAL
+========================================== */
+
+.modal {
+    width: 420px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 18px;
+
+    padding: 24px;
+
+    background: var(--bg-secondary);
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    box-shadow: 0 20px 40px rgba(0,0,0,.35);
+}
+
+.modal h2 {
+    margin: 0;
+
+    font-size: 20px;
+
+    font-weight: 700;
+
+    color: var(--text-primary);
+}
+
+/* ==========================================
+   INPUT
+========================================== */
+
+.modal input {
+    width: 100%;
+}
+
+/* ==========================================
+   ACTIONS
+========================================== */
+
+.modal-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    margin-top: 8px;
+}

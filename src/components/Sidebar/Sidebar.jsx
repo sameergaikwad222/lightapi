@@ -1,3 +1,11 @@
+import { useMemo, useState } from "react";
+import {
+  ChevronDown,
+  ChevronRight,
+  Search,
+  Trash2,
+} from "lucide-react";
+
 import useRequestStore from "../../store/requestStore";
 
 function Sidebar() {
@@ -7,109 +15,211 @@ function Sidebar() {
     loadRequest,
     loadCollection,
     deleteCollection,
+    clearHistory,
+    selectedHistoryId,
+    selectedCollectionId,
   } = useRequestStore();
+
+  const [search, setSearch] = useState("");
+
+  const [historyOpen, setHistoryOpen] = useState(true);
+
+  const [collectionsOpen, setCollectionsOpen] =
+    useState(true);
+
+  const getRequestName = (url = "") => {
+    try {
+      const u = new URL(url);
+
+      return u.pathname === "/" ? u.hostname : u.pathname;
+    } catch {
+      return url;
+    }
+  };
+
+  const filteredHistory = useMemo(() => {
+    const q = search.toLowerCase();
+
+    return history.filter(
+      (item) =>
+        item.url.toLowerCase().includes(q) ||
+        item.method.toLowerCase().includes(q)
+    );
+  }, [history, search]);
+
+  const filteredCollections = useMemo(() => {
+    const q = search.toLowerCase();
+
+    return collections.filter(
+      (item) =>
+        item.name.toLowerCase().includes(q) ||
+        item.url.toLowerCase().includes(q) ||
+        item.method.toLowerCase().includes(q)
+    );
+  }, [collections, search]);
 
   return (
     <aside className="sidebar">
-      <h3>Collections</h3>
 
-      {collections.length === 0 ? (
-        <p>No saved requests.</p>
-      ) : (
-        <ul>
-          {collections.map((item) => (
-            <li
-              key={item.id}
-              style={{
-                marginBottom: "10px",
-                padding: "8px",
-                border: "1px solid #374151",
-                borderRadius: "6px",
-              }}
-            >
-              <div
-                onClick={() => loadCollection(item)}
-                style={{ cursor: "pointer" }}
-              >
-                <strong>{item.name}</strong>
+      <div className="sidebar-search">
+        <Search size={16} />
 
-                <div
-                  style={{
-                    fontSize: "12px",
-                    marginTop: "4px",
-                  }}
-                >
-                  {item.method}
-                </div>
+        <input
+          placeholder="Search..."
+          value={search}
+          onChange={(e) =>
+            setSearch(e.target.value)
+          }
+        />
+      </div>
 
-                <div
-                  style={{
-                    fontSize: "12px",
-                    wordBreak: "break-all",
-                  }}
-                >
-                  {item.url}
-                </div>
+      {/* HISTORY */}
+
+      <div className="sidebar-section">
+
+        <div className="sidebar-section-header">
+
+          <button
+            className="section-toggle"
+            onClick={() =>
+              setHistoryOpen(!historyOpen)
+            }
+          >
+            {historyOpen ? (
+              <ChevronDown size={16} />
+            ) : (
+              <ChevronRight size={16} />
+            )}
+
+            History
+          </button>
+
+          <button
+            className="icon-btn"
+            onClick={clearHistory}
+          >
+            <Trash2 size={16} />
+          </button>
+
+        </div>
+
+        {historyOpen && (
+          <>
+            {filteredHistory.length === 0 ? (
+              <div className="empty-text">
+                No requests found
               </div>
+            ) : (
+              <ul className="sidebar-list">
+                {filteredHistory.map((item) => (
+                  <li
+                    key={item.id}
+                    className={`sidebar-item ${
+                      selectedHistoryId === item.id
+                        ? "active"
+                        : ""
+                    }`}
+                    onClick={() =>
+                      loadRequest(item)
+                    }
+                  >
+                    <span
+                      className={`method method-${item.method.toLowerCase()}`}
+                    >
+                      {item.method}
+                    </span>
 
-              <button
-                style={{
-                  marginTop: "8px",
-                }}
-                onClick={() => deleteCollection(item.id)}
-              >
-                🗑 Delete
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+                    <span className="request-name">
+                      {getRequestName(item.url)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
+        )}
 
-      <hr style={{ margin: "20px 0" }} />
+      </div>
 
-      <h3>History</h3>
+      <div className="sidebar-divider" />
 
-      {history.length === 0 ? (
-        <p>No requests yet.</p>
-      ) : (
-        <ul>
-          {history.map((item) => (
-            <li
-              key={item.id}
-              onClick={() => loadRequest(item)}
-              style={{
-                marginBottom: "10px",
-                padding: "8px",
-                border: "1px solid #374151",
-                borderRadius: "6px",
-                cursor: "pointer",
-              }}
-            >
-              <div>
-                <strong>{item.method}</strong>
+      {/* COLLECTIONS */}
+
+      <div className="sidebar-section">
+
+        <div className="sidebar-section-header">
+
+          <button
+            className="section-toggle"
+            onClick={() =>
+              setCollectionsOpen(
+                !collectionsOpen
+              )
+            }
+          >
+            {collectionsOpen ? (
+              <ChevronDown size={16} />
+            ) : (
+              <ChevronRight size={16} />
+            )}
+
+            Collections
+          </button>
+
+        </div>
+
+        {collectionsOpen && (
+          <>
+            {filteredCollections.length === 0 ? (
+              <div className="empty-text">
+                No collections found
               </div>
+            ) : (
+              <ul className="sidebar-list">
+                {filteredCollections.map((item) => (
+                  <li
+                    key={item.id}
+                    className={`sidebar-item ${
+                      selectedCollectionId ===
+                      item.id
+                        ? "active"
+                        : ""
+                    }`}
+                  >
+                    <div
+                      className="sidebar-item-content"
+                      onClick={() =>
+                        loadCollection(item)
+                      }
+                    >
+                      <span
+                        className={`method method-${item.method.toLowerCase()}`}
+                      >
+                        {item.method}
+                      </span>
 
-              <div
-                style={{
-                  fontSize: "12px",
-                  wordBreak: "break-all",
-                }}
-              >
-                {item.url}
-              </div>
+                      <span className="request-name">
+                        {item.name}
+                      </span>
+                    </div>
 
-              <div
-                style={{
-                  fontSize: "12px",
-                  marginTop: "4px",
-                }}
-              >
-                Status: {item.status}
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+                    <button
+                      className="sidebar-delete"
+                      onClick={() =>
+                        deleteCollection(item.id)
+                      }
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
+        )}
+
+      </div>
+
     </aside>
   );
 }

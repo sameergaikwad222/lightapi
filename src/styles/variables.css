@@ -1,0 +1,39 @@
+:root {
+  /* Backgrounds */
+  --bg-primary: #0f172a;
+  --bg-secondary: #111827;
+  --bg-panel: #1e293b;
+  --bg-hover: #334155;
+
+  /* Borders */
+  --border: #334155;
+
+  /* Text */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+
+  /* Accent */
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+
+  /* Status */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+
+  /* Shadow */
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}

@@ -1,20 +1,53 @@
-const HISTORY_KEY = "lightapi_history";
-const COLLECTIONS_KEY = "lightapi_collections";
+const HISTORY_KEY = "lightapi-history";
 
-export const loadHistory = () => {
-  const data = localStorage.getItem(HISTORY_KEY);
-  return data ? JSON.parse(data) : [];
-};
+const COLLECTIONS_KEY = "lightapi-collections";
 
-export const saveHistory = (history) => {
+const ENVIRONMENT_KEY = "lightapi-environment";
+
+/* ==========================================
+   HISTORY
+========================================== */
+
+export function loadHistory() {
+  try {
+    return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+export function saveHistory(history) {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-};
+}
 
-export const loadCollections = () => {
-  const data = localStorage.getItem(COLLECTIONS_KEY);
-  return data ? JSON.parse(data) : [];
-};
+/* ==========================================
+   COLLECTIONS
+========================================== */
 
-export const saveCollections = (collections) => {
+export function loadCollections() {
+  try {
+    return JSON.parse(localStorage.getItem(COLLECTIONS_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+export function saveCollections(collections) {
   localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(collections));
-};
+}
+
+/* ==========================================
+   ENVIRONMENT
+========================================== */
+
+export function loadEnvironment() {
+  try {
+    return JSON.parse(localStorage.getItem(ENVIRONMENT_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+export function saveEnvironment(environment) {
+  localStorage.setItem(ENVIRONMENT_KEY, JSON.stringify(environment));
+}

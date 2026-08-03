@@ -10,7 +10,7 @@ function Header() {
     <>
       <header className="header">
         <div className="header-left">
-          <h2 className="logo">LightAPI</h2>
+          <h2 className="logo">🚀 LightAPI</h2>
         </div>
 
         <div className="header-right">

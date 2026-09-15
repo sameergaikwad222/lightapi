@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import {
   ChevronDown,
   ChevronRight,
+  FolderOpen,
   Search,
   Trash2,
 } from "lucide-react";
@@ -15,9 +16,11 @@ function Sidebar() {
     loadRequest,
     loadCollection,
     deleteCollection,
+    deleteCollectionRequest,
     clearHistory,
     selectedHistoryId,
     selectedCollectionId,
+    selectedCollectionRequestId,
   } = useRequestStore();
 
   const [search, setSearch] = useState("");
@@ -51,10 +54,14 @@ function Sidebar() {
     const q = search.toLowerCase();
 
     return collections.filter(
-      (item) =>
-        item.name.toLowerCase().includes(q) ||
-        item.url.toLowerCase().includes(q) ||
-        item.method.toLowerCase().includes(q)
+      (collection) =>
+        collection.name.toLowerCase().includes(q) ||
+        collection.requests.some(
+          (item) =>
+            item.name.toLowerCase().includes(q) ||
+            item.url.toLowerCase().includes(q) ||
+            item.method.toLowerCase().includes(q),
+        ),
     );
   }, [collections, search]);
 
@@ -163,7 +170,13 @@ function Sidebar() {
               <ChevronRight size={16} />
             )}
 
-            Collections
+            <span className="section-title">
+              <FolderOpen size={15} />
+              API Collection
+              <span className="section-count">
+                {collections.length}
+              </span>
+            </span>
           </button>
 
         </div>
@@ -172,47 +185,86 @@ function Sidebar() {
           <>
             {filteredCollections.length === 0 ? (
               <div className="empty-text">
-                No collections found
+                No saved APIs found
               </div>
             ) : (
               <ul className="sidebar-list">
-                {filteredCollections.map((item) => (
-                  <li
-                    key={item.id}
-                    className={`sidebar-item ${
-                      selectedCollectionId ===
-                      item.id
-                        ? "active"
-                        : ""
-                    }`}
-                  >
-                    <div
-                      className="sidebar-item-content"
-                      onClick={() =>
-                        loadCollection(item)
-                      }
-                    >
-                      <span
-                        className={`method method-${item.method.toLowerCase()}`}
-                      >
-                        {item.method}
-                      </span>
+                {filteredCollections.map((collection) => {
+                  const requests = collection.requests.filter((item) => {
+                    const q = search.toLowerCase();
 
-                      <span className="request-name">
-                        {item.name}
-                      </span>
-                    </div>
+                    return (
+                      !q ||
+                      collection.name.toLowerCase().includes(q) ||
+                      item.name.toLowerCase().includes(q) ||
+                      item.url.toLowerCase().includes(q) ||
+                      item.method.toLowerCase().includes(q)
+                    );
+                  });
 
-                    <button
-                      className="sidebar-delete"
-                      onClick={() =>
-                        deleteCollection(item.id)
-                      }
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </li>
-                ))}
+                  return (
+                    <li key={collection.id} className="collection-folder">
+                      <div className="collection-folder-header">
+                        <span className="collection-folder-name">
+                          <FolderOpen size={14} />
+                          {collection.name}
+                          <span className="folder-count">
+                            {collection.requests.length}
+                          </span>
+                        </span>
+
+                        <button
+                          className="sidebar-delete"
+                          onClick={() => deleteCollection(collection.id)}
+                          title="Delete collection folder"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+
+                      <ul className="collection-request-list">
+                        {requests.map((item) => (
+                          <li
+                            key={item.id}
+                            className={`sidebar-item ${
+                              selectedCollectionRequestId === item.id
+                                ? "active"
+                                : ""
+                            }`}
+                          >
+                            <div
+                              className="sidebar-item-content"
+                              onClick={() => loadCollection(item, collection.id)}
+                            >
+                              <span
+                                className={`method method-${item.method.toLowerCase()}`}
+                              >
+                                {item.method}
+                              </span>
+
+                              <span className="request-details">
+                                <span className="request-name">{item.name}</span>
+                                <span className="request-url">
+                                  {getRequestName(item.url)}
+                                </span>
+                              </span>
+                            </div>
+
+                            <button
+                              className="sidebar-delete"
+                              onClick={() =>
+                                deleteCollectionRequest(collection.id, item.id)
+                              }
+                              title="Delete saved API"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </>

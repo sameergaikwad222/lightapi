@@ -26,7 +26,28 @@ export function saveHistory(history) {
 
 export function loadCollections() {
   try {
-    return JSON.parse(localStorage.getItem(COLLECTIONS_KEY) || "[]");
+    const collections = JSON.parse(
+      localStorage.getItem(COLLECTIONS_KEY) || "[]",
+    );
+
+    if (
+      collections.length > 0 &&
+      collections.every((collection) => Array.isArray(collection.requests))
+    ) {
+      return collections;
+    }
+
+    if (collections.length === 0) {
+      return [];
+    }
+
+    return [
+      {
+        id: `collection-${Date.now()}`,
+        name: "My APIs",
+        requests: collections,
+      },
+    ];
   } catch {
     return [];
   }

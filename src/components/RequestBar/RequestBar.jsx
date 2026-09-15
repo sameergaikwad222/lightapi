@@ -19,6 +19,7 @@ function RequestBar() {
     collections,
     addHistory,
     addCollection,
+    addCollectionRequest,
     setMethod,
     setUrl,
     setResponse,
@@ -36,7 +37,9 @@ function RequestBar() {
   const suggestions = useMemo(() => {
     const urls = [
       ...history.map((item) => item.url),
-      ...collections.map((item) => item.url),
+      ...collections.flatMap((collection) =>
+        collection.requests.map((item) => item.url),
+      ),
     ]
       .filter(Boolean)
       .filter((value, index, array) => array.indexOf(value) === index);
@@ -175,10 +178,17 @@ function RequestBar() {
     }
   };
 
-  const handleSave = (name) => {
-    addCollection({
+  const handleSave = ({ collectionId, collectionName, requestName }) => {
+    let targetCollectionId = collectionId;
+
+    if (!targetCollectionId) {
+      targetCollectionId = `collection-${Date.now()}`;
+      addCollection(collectionName, targetCollectionId);
+    }
+
+    addCollectionRequest(targetCollectionId, {
       id: Date.now(),
-      name,
+      name: requestName,
       method,
       url,
       params,
@@ -254,6 +264,7 @@ function RequestBar() {
         </Button>
         <SaveRequestModal
           isOpen={showSaveModal}
+          collections={collections}
           onClose={() => setShowSaveModal(false)}
           onSave={handleSave}
         />

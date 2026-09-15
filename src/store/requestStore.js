@@ -52,6 +52,8 @@ const useRequestStore = create((set) => ({
 
   selectedCollectionId: null,
 
+  selectedCollectionRequestId: null,
+
   /* ==========================================
      STORAGE
   ========================================== */
@@ -156,21 +158,40 @@ const useRequestStore = create((set) => ({
       auth: request.auth,
       selectedHistoryId: request.id,
       selectedCollectionId: null,
+      selectedCollectionRequestId: null,
     }),
 
   /* ==========================================
      COLLECTIONS
   ========================================== */
 
-  addCollection: (request) =>
+  addCollection: (name, id = `collection-${Date.now()}`) =>
     set((state) => {
-      const collections = [...state.collections, request];
+      const collection = {
+        id,
+        name,
+        requests: [],
+      };
+      const collections = [...state.collections, collection];
 
       saveCollections(collections);
 
       return {
         collections,
       };
+    }),
+
+  addCollectionRequest: (collectionId, request) =>
+    set((state) => {
+      const collections = state.collections.map((collection) =>
+        collection.id === collectionId
+          ? { ...collection, requests: [...collection.requests, request] }
+          : collection,
+      );
+
+      saveCollections(collections);
+
+      return { collections };
     }),
 
   deleteCollection: (id) =>
@@ -181,10 +202,36 @@ const useRequestStore = create((set) => ({
 
       return {
         collections,
+        selectedCollectionId:
+          state.selectedCollectionId === id ? null : state.selectedCollectionId,
       };
     }),
 
-  loadCollection: (request) =>
+  deleteCollectionRequest: (collectionId, requestId) =>
+    set((state) => {
+      const collections = state.collections.map((collection) =>
+        collection.id === collectionId
+          ? {
+              ...collection,
+              requests: collection.requests.filter(
+                (request) => request.id !== requestId,
+              ),
+            }
+          : collection,
+      );
+
+      saveCollections(collections);
+
+      return {
+        collections,
+        selectedCollectionRequestId:
+          state.selectedCollectionRequestId === requestId
+            ? null
+            : state.selectedCollectionRequestId,
+      };
+    }),
+
+  loadCollection: (request, collectionId) =>
     set({
       method: request.method,
       url: request.url,
@@ -192,7 +239,8 @@ const useRequestStore = create((set) => ({
       headers: request.headers,
       body: request.body,
       auth: request.auth,
-      selectedCollectionId: request.id,
+      selectedCollectionId: collectionId,
+      selectedCollectionRequestId: request.id,
       selectedHistoryId: null,
     }),
 }));

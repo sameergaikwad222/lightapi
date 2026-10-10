@@ -2,6 +2,7 @@ import test, { beforeEach } from "node:test";
 import assert from "node:assert/strict";
 import { createEmptyRequest } from "../src/utils/request.js";
 import { parseCurl } from "../src/utils/curl.js";
+import { createBodyField, fileMetadata, prepareRequestBody } from "../src/utils/requestBody.js";
 
 const storage = new Map();
 globalThis.localStorage = {
@@ -38,6 +39,7 @@ test("switching restores all draft fields, editor selections and pending input f
   state.setAuth({ ...state.auth, type: "bearer", token: "first-token" });
   state.setActiveTab("auth");
   state.setActiveResponseTab("raw");
+  state.setResponseViewFormat("xml");
   state.setParamDraft({ key: "pending", value: "first" });
   state.setHeaderDraft({ key: "X-Pending", value: "first" });
   const snapshot = store.getState().requestTabs[0];
@@ -47,7 +49,7 @@ test("switching restores all draft fields, editor selections and pending input f
   state.setUrl("https://example.com/second");
   state.setActiveTab("headers");
   state.selectRequest(firstId);
-  for (const key of ["method", "url", "params", "headers", "body", "auth", "activeTab", "activeResponseTab", "paramDraft", "headerDraft"]) {
+  for (const key of ["method", "url", "params", "headers", "body", "auth", "activeTab", "activeResponseTab", "responseViewFormat", "paramDraft", "headerDraft"]) {
     assert.deepEqual(store.getState()[key], snapshot[key], key);
   }
 });
@@ -190,4 +192,54 @@ test("clearing history leaves open history drafts intact and removes stale selec
   assert.equal(store.getState().requestTabs[1].url, entry.url);
   assert.equal(store.getState().requestTabs[1].selectedHistoryId, null);
   assert.equal(store.getState().history.length, 0);
+});
+
+test("body formats, form rows and uploads belong to their tab and switching formats keeps drafts", () => {
+  const store = createRequestStore();
+  const firstId = store.getState().activeRequestId;
+  const file = new File(["upload"], "data.txt");
+  store.getState().setBody("<root/>");
+  store.getState().setBodyType("xml");
+  assert.equal(store.getState().headers[0].value, "application/xml");
+  store.getState().setBodyType("form-data");
+  assert.deepEqual(store.getState().headers, []);
+  store.getState().setBodyFields([{ ...createBodyField("attachment"), type: "file", file, fileMeta: fileMetadata(file) }]);
+  store.getState().setBodyFile(file);
+  store.getState().newRequest();
+  assert.equal(store.getState().bodyType, "json");
+  assert.deepEqual(store.getState().bodyFields, []);
+  assert.equal(store.getState().bodyFile, null);
+  store.getState().selectRequest(firstId);
+  assert.equal(store.getState().bodyType, "form-data");
+  assert.equal(store.getState().bodyFields[0].file, file);
+  assert.equal(store.getState().bodyFile, file);
+  store.getState().setBodyType("none");
+  store.getState().setBodyType("xml");
+  assert.equal(store.getState().body, "<root/>");
+});
+
+test("saved collections and history restore format/rows and remember files for re-selection after reload", () => {
+  const store = createRequestStore();
+  const file = new File(["file contents"], "data.txt", { type: "text/plain" });
+  const saved = {
+    ...createEmptyRequest(), id: "saved", bodyType: "form-data",
+    bodyFields: [createBodyField("name", "Ada"), { ...createBodyField("attachment"), type: "file", file, fileMeta: fileMetadata(file) }],
+    bodyFile: file, bodyFileMeta: fileMetadata(file),
+  };
+  store.getState().addCollection("Folder", "folder");
+  store.getState().addCollectionRequest("folder", saved);
+  store.getState().addHistory(saved);
+  store.getState().loadCollection(saved, "folder");
+  assert.equal(store.getState().bodyFields[1].file, file);
+  assert.notEqual(store.getState().bodyFields[0], saved.bodyFields[0]);
+  const reloaded = createRequestStore();
+  const collectionRequest = reloaded.getState().collections[0].requests[0];
+  assert.equal(collectionRequest.bodyFields[1].file, null);
+  assert.equal(collectionRequest.bodyFields[1].fileMeta.name, "data.txt");
+  assert.equal(collectionRequest.bodyFile, null);
+  assert.equal(reloaded.getState().history[0].bodyFields[1].fileMeta.name, "data.txt");
+  reloaded.getState().loadCollection(collectionRequest, "folder");
+  assert.equal(reloaded.getState().bodyType, "form-data");
+  assert.equal(reloaded.getState().bodyFields[0].value, "Ada");
+  assert.throws(() => prepareRequestBody(reloaded.getState()), /Choose a file/);
 });

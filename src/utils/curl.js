@@ -1,4 +1,5 @@
 import { createEmptyRequest, REQUEST_METHODS } from "./request.js";
+import { inferBodyType, normalizeRequestBody } from "./requestBody.js";
 
 // Parse pasted text only; shell expressions and commands are never executed.
 function tokenize(command) {
@@ -209,5 +210,8 @@ export function parseCurl(command) {
   if (json && !hasHeader("accept")) setHeader("Accept", "application/json");
   if (hasHeader("authorization")) request.auth = createEmptyRequest().auth;
 
-  return request;
+  request.bodyType = inferBodyType(request.headers);
+  // Imported form bodies become editable rows, including repeated keys.
+  delete request.bodyFields;
+  return { ...request, ...normalizeRequestBody(request) };
 }

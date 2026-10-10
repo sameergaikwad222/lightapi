@@ -1,11 +1,11 @@
-import apiClient from "../../services/apiClient";
+import apiClient, { prepareBody } from "../../services/apiClient";
 import useRequestStore from "../../store/requestStore";
 import { useState, useMemo, useEffect, useRef } from "react";
 import SaveRequestModal from "../SaveRequestModal/SaveRequestModal";
 import Button from "../ui/Button/Button";
 import Input from "../ui/Input/Input";
 import { Send, Save } from "lucide-react";
-import { isJsonContentType, REQUEST_METHODS } from "../../utils/request";
+import { REQUEST_METHODS } from "../../utils/request";
 
 function RequestBar() {
   const {
@@ -14,6 +14,10 @@ function RequestBar() {
     params,
     headers,
     body,
+    bodyType,
+    bodyFields,
+    bodyFile,
+    bodyFileMeta,
     auth,
     loading,
     activeRequestId,
@@ -26,6 +30,8 @@ function RequestBar() {
     setUrl,
     setResponse,
     setLoading,
+    setBodyError,
+    setActiveTab,
     markRequestSaved,
   } = useRequestStore();
 
@@ -118,39 +124,27 @@ function RequestBar() {
   const handleSend = async () => {
     if (!url.trim() || loading) return;
 
+    const request = { method, url, params, headers, body, bodyType, bodyFields, bodyFile, bodyFileMeta, auth };
     try {
-      const contentType = headers.find(header => header.key.toLowerCase() === "content-type")?.value;
-      if (body.trim() && isJsonContentType(contentType)) {
-        JSON.parse(body);
-      }
+      prepareBody(request);
     } catch (err) {
-      alert("Invalid JSON Body", err.message);
+      setBodyError(err.message);
+      setActiveTab("body");
       return;
     }
+    setBodyError("");
 
     const requestId = activeRequestId;
     setLoading(true, requestId);
 
     try {
-      const response = await apiClient({
-        method,
-        url,
-        params,
-        headers,
-        body,
-        auth,
-      });
+      const response = await apiClient(request);
 
       setResponse(response, requestId);
 
       addHistory({
         id: crypto.randomUUID(),
-        method,
-        url,
-        params,
-        headers,
-        body,
-        auth,
+        ...request,
         status: response.status,
         time: response.time,
       });
@@ -169,12 +163,7 @@ function RequestBar() {
 
       addHistory({
         id: crypto.randomUUID(),
-        method,
-        url,
-        params,
-        headers,
-        body,
-        auth,
+        ...request,
         status: errorResponse.status,
         time: errorResponse.time,
       });
@@ -200,6 +189,10 @@ function RequestBar() {
       params,
       headers,
       body,
+      bodyType,
+      bodyFields,
+      bodyFile,
+      bodyFileMeta,
       auth,
     });
     markRequestSaved(activeRequestId, {

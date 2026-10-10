@@ -7,6 +7,10 @@ export function createEmptyRequest() {
     params: [],
     headers: [],
     body: "",
+    bodyType: "json",
+    bodyFields: [],
+    bodyFile: null,
+    bodyFileMeta: null,
     auth: {
       type: "none",
       token: "",

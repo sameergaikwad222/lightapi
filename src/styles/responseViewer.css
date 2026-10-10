@@ -41,6 +41,8 @@
 
     display: flex;
     flex-shrink: 0;
+    flex-wrap: wrap;
+    gap: 12px;
 
     justify-content: space-between;
 
@@ -57,6 +59,8 @@
 .response-meta {
 
     display: flex;
+    flex-wrap: wrap;
+    min-width: 0;
 
     align-items: center;
 
@@ -156,6 +160,8 @@
 
     display: flex;
     flex-shrink: 0;
+    align-items: center;
+    flex-wrap: wrap;
 
     gap: 8px;
 
@@ -383,4 +389,124 @@
 
     color: #c678dd;
 
+}
+
+.status-badge.status-error {
+    color: #fca5a5;
+    background: rgba(239, 68, 68, .15);
+}
+
+.response-content-type {
+    color: var(--text-secondary);
+    font-size: 12px;
+    max-width: 230px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.response-format-label {
+    margin-left: auto;
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.response-tabs select {
+    min-width: 110px;
+    height: 34px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0 8px;
+    background: var(--bg-panel);
+    color: var(--text-primary);
+}
+
+.response-tabs select:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.copy-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.response-content .response-source {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.response-content .response-notice,
+.response-action-message {
+    padding: 10px 16px;
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.response-action-message {
+    flex-shrink: 0;
+}
+
+.response-content.response-preview-content {
+    display: flex;
+    padding: 0;
+}
+
+.response-preview-content iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    border: 0;
+    background: white;
+}
+
+.response-media img,
+.response-media video {
+    display: block;
+    max-width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+}
+
+.response-media audio {
+    display: block;
+    width: min(100%, 500px);
+}
+
+.response-file {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+    color: var(--text-secondary);
+    overflow-wrap: anywhere;
+}
+
+.response-file strong {
+    color: var(--text-primary);
+}
+
+.response-csv table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.response-csv caption {
+    text-align: left;
+    color: var(--text-secondary);
+    padding-bottom: 10px;
+}
+
+.response-csv th,
+.response-csv td {
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    text-align: left;
+    white-space: pre-wrap;
+    min-width: 100px;
+}
+
+.response-csv th {
+    background: var(--bg-panel);
 }

@@ -1,6 +1,7 @@
 import axios from "axios";
 import useRequestStore from "../store/requestStore";
-import { isJsonContentType } from "../utils/request";
+import { prepareRequestBody } from "../utils/requestBody";
+import { normalizeResponse } from "../utils/response";
 
 function resolveVariables(value) {
   if (!value || typeof value !== "string") {
@@ -16,7 +17,16 @@ function resolveVariables(value) {
   });
 }
 
-const apiClient = async ({ method, url, params, headers, body, auth }) => {
+export function prepareBody(request) {
+  const headers = {};
+  request.headers.forEach(header => {
+    if (header.key.trim()) headers[header.key.trim()] = resolveVariables(header.value);
+  });
+  return prepareRequestBody(request, headers, resolveVariables);
+}
+
+const apiClient = async (request) => {
+  const { method, url, params, auth } = request;
   const startTime = performance.now();
 
   const queryParams = {};
@@ -27,13 +37,7 @@ const apiClient = async ({ method, url, params, headers, body, auth }) => {
     }
   });
 
-  const requestHeaders = {};
-
-  headers.forEach((header) => {
-    if (header.key.trim()) {
-      requestHeaders[header.key] = resolveVariables(header.value);
-    }
-  });
+  const { data: requestBody, headers: requestHeaders } = prepareBody(request);
 
   if (auth.type === "bearer" && auth.token.trim()) {
     requestHeaders.Authorization = `Bearer ${resolveVariables(auth.token)}`;
@@ -57,39 +61,21 @@ const apiClient = async ({ method, url, params, headers, body, auth }) => {
     }
   }
 
-  let requestBody;
-
-  if (body) {
-    const resolvedBody = resolveVariables(body);
-    const contentType = Object.entries(requestHeaders).find(([key]) => key.toLowerCase() === "content-type")?.[1];
-
-    requestBody = resolvedBody;
-    if (isJsonContentType(contentType)) {
-      try {
-        requestBody = JSON.parse(resolvedBody);
-      } catch {
-        requestBody = resolvedBody;
-      }
-    }
-  }
-
   const response = await axios({
     method,
     url: resolveVariables(url),
     params: queryParams,
     headers: requestHeaders,
     data: requestBody,
+    transformRequest: [(data) => data],
+    responseType: "blob",
+    transformResponse: [(data) => data],
+    validateStatus: () => true,
   });
 
   const endTime = performance.now();
 
-  return {
-    status: response.status,
-    statusText: response.statusText,
-    headers: response.headers,
-    data: response.data,
-    time: Math.round(endTime - startTime),
-  };
+  return normalizeResponse(response, Math.round(endTime - startTime));
 };
 
 export default apiClient;

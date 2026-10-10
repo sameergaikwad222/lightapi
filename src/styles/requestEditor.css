@@ -137,9 +137,146 @@
    BODY EDITOR
 ========================================== */
 
+.body-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+    min-height: 0;
+    padding: 16px 20px;
+    overflow: auto;
+}
+
+.body-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.body-toolbar label {
+    font-weight: 600;
+}
+
+.body-toolbar select,
+.body-field-row select,
+.body-field-input {
+    min-width: 0;
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0 10px;
+    color: var(--text-primary);
+    background: var(--bg-panel);
+}
+
+.body-toolbar select:focus-visible,
+.body-field-row select:focus-visible,
+.body-field-input:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.body-format-hint,
+.body-form-actions span,
+.body-empty,
+.body-file-name {
+    color: var(--text-secondary);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.body-error {
+    color: #fca5a5;
+    flex-shrink: 0;
+}
+
+.body-form-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    min-height: 80px;
+}
+
+.body-form-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.body-fields-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.body-fields-scroll .body-empty {
+    padding: 16px;
+}
+
+.body-field-row {
+    display: grid;
+    grid-template-columns: 20px minmax(100px, 1fr) 78px minmax(140px, 1.5fr) 32px;
+    min-width: 490px;
+    gap: 10px;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.body-field-row:last-child {
+    border-bottom: none;
+}
+
+.body-file-value {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 4px;
+}
+
+.body-file-value input {
+    width: 100%;
+    min-width: 0;
+}
+
+.body-remove-field {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    border: 0;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    background: transparent;
+    cursor: pointer;
+}
+
+.body-remove-field:hover {
+    color: #fca5a5;
+    background: var(--bg-hover);
+}
+
+.body-binary-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.body-editor-container[hidden] {
+    display: none;
+}
+
 .body-editor-container {
 
-    height: 450px;
+    flex: 1;
+    min-height: 80px;
 
     border: 1px solid var(--border);
 

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { createEmptyRequest } from "../utils/request.js";
+import { normalizeRequestBody, headersForBodyType, fileMetadata } from "../utils/requestBody.js";
 import {
   loadHistory,
   saveHistory,
@@ -25,11 +26,14 @@ function createRequestTab(request = {}, source = {}) {
     params: (request.params ?? []).map(param => ({ ...param })),
     headers,
     body,
+    ...normalizeRequestBody(request),
+    bodyError: "",
     auth: { ...defaults.auth, ...request.auth },
     response: null,
     loading: false,
-    activeTab: body ? "body" : headers.length ? "headers" : "params",
+    activeTab: body || request.bodyFields?.length || request.bodyFile || request.bodyFileMeta ? "body" : headers.length ? "headers" : "params",
     activeResponseTab: "body",
+    responseViewFormat: "auto",
     paramDraft: { key: "", value: "" },
     headerDraft: { key: "", value: "" },
     selectedHistoryId: null,
@@ -96,10 +100,19 @@ export function createRequestStore() {
     setUrl: (url) => set(state => updateTab(state, state.activeRequestId, { url })),
     setParams: (params) => set(state => updateTab(state, state.activeRequestId, { params })),
     setHeaders: (headers) => set(state => updateTab(state, state.activeRequestId, { headers })),
-    setBody: (body) => set(state => updateTab(state, state.activeRequestId, { body })),
+    setBody: (body) => set(state => updateTab(state, state.activeRequestId, { body, bodyError: "" })),
+    setBodyType: (bodyType) => set(state => updateTab(state, state.activeRequestId, {
+      bodyType, bodyError: "", headers: headersForBodyType(state.headers, bodyType),
+    })),
+    setBodyFields: (bodyFields) => set(state => updateTab(state, state.activeRequestId, { bodyFields, bodyError: "" })),
+    setBodyFile: (bodyFile) => set(state => updateTab(state, state.activeRequestId, {
+      bodyFile, bodyFileMeta: fileMetadata(bodyFile), bodyError: "",
+    })),
+    setBodyError: (bodyError) => set(state => updateTab(state, state.activeRequestId, { bodyError })),
     setAuth: (auth) => set(state => updateTab(state, state.activeRequestId, { auth })),
     setActiveTab: (activeTab) => set(state => updateTab(state, state.activeRequestId, { activeTab })),
     setActiveResponseTab: (activeResponseTab) => set(state => updateTab(state, state.activeRequestId, { activeResponseTab })),
+    setResponseViewFormat: (responseViewFormat) => set(state => updateTab(state, state.activeRequestId, { responseViewFormat })),
     setParamDraft: (paramDraft) => set(state => updateTab(state, state.activeRequestId, { paramDraft })),
     setHeaderDraft: (headerDraft) => set(state => updateTab(state, state.activeRequestId, { headerDraft })),
 

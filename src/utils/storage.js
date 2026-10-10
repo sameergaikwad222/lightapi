@@ -1,3 +1,5 @@
+import { bodyStorageReplacer } from "./requestBody.js";
+
 const HISTORY_KEY = "lightapi-history";
 
 const COLLECTIONS_KEY = "lightapi-collections";
@@ -17,7 +19,7 @@ export function loadHistory() {
 }
 
 export function saveHistory(history) {
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history, bodyStorageReplacer));
 }
 
 /* ==========================================
@@ -54,7 +56,7 @@ export function loadCollections() {
 }
 
 export function saveCollections(collections) {
-  localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(collections));
+  localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(collections, bodyStorageReplacer));
 }
 
 /* ==========================================

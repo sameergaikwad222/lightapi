@@ -74,6 +74,23 @@
     gap: 2px;
 }
 
+.history-section {
+    flex-shrink: 0;
+}
+
+.history-list {
+    max-height: min(40vh, 320px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+}
+
+.history-list:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
 /* ==========================================
    ITEM
 ========================================== */
@@ -204,6 +221,17 @@
 
 .sidebar-item:hover .sidebar-delete {
     opacity: 1;
+}
+
+.sidebar-delete:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.collection-delete {
+    opacity: 1;
+    flex-shrink: 0;
 }
 
 .sidebar-delete:hover {
@@ -434,12 +462,46 @@
 
 .collection-folder-name {
     display: flex;
+    flex: 1;
 
     align-items: center;
 
     min-width: 0;
 
     gap: 7px;
+}
+
+.collection-folder-name > svg,
+.folder-count {
+    flex-shrink: 0;
+}
+
+.collection-folder-toggle {
+    min-height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.collection-folder-toggle:hover {
+    color: var(--primary);
+}
+
+.collection-folder-toggle:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.collection-folder-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .folder-count {
@@ -464,6 +526,10 @@
     border-left: 1px solid var(--border);
 
     list-style: none;
+}
+
+.collection-request-list[hidden] {
+    display: none;
 }
 
 .request-details {

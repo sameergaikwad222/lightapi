@@ -1,5 +1,5 @@
 import { create } from "zustand";
-
+import { createEmptyRequest } from "../utils/request.js";
 import {
   loadHistory,
   saveHistory,
@@ -7,242 +7,182 @@ import {
   saveCollections,
   loadEnvironment,
   saveEnvironment,
-} from "../utils/storage";
+} from "../utils/storage.js";
 
 const MAX_HISTORY = 100;
 
-const useRequestStore = create((set) => ({
-  /* ==========================================
-     REQUEST
-  ========================================== */
+function createRequestTab(request = {}, source = {}) {
+  const defaults = createEmptyRequest();
+  const body = request.body ?? "";
+  const headers = (request.headers ?? []).map(header => ({ ...header }));
 
-  method: "GET",
+  return {
+    ...defaults,
+    id: crypto.randomUUID(),
+    name: request.name ?? "",
+    method: request.method ?? defaults.method,
+    url: request.url ?? "",
+    params: (request.params ?? []).map(param => ({ ...param })),
+    headers,
+    body,
+    auth: { ...defaults.auth, ...request.auth },
+    response: null,
+    loading: false,
+    activeTab: body ? "body" : headers.length ? "headers" : "params",
+    activeResponseTab: "body",
+    paramDraft: { key: "", value: "" },
+    headerDraft: { key: "", value: "" },
+    selectedHistoryId: null,
+    selectedCollectionId: null,
+    selectedCollectionRequestId: null,
+    ...source,
+  };
+}
 
-  url: "",
+// Existing editors read the active request fields; the tab list owns every draft.
+function tabState(tabs, activeId) {
+  const active = tabs.find(tab => tab.id === activeId) ?? tabs[0];
+  const { id, ...fields } = active;
+  return { requestTabs: tabs, activeRequestId: id, ...fields };
+}
 
-  response: null,
+function updateTab(state, id, changes) {
+  if (!state.requestTabs.some(tab => tab.id === id)) return state;
+  const tabs = state.requestTabs.map(tab => tab.id === id ? { ...tab, ...changes } : tab);
+  return tabState(tabs, state.activeRequestId);
+}
 
-  loading: false,
+function openRequest(state, request, source = {}) {
+  const existing = state.requestTabs.find(tab =>
+    source.selectedCollectionRequestId != null
+      ? tab.selectedCollectionId === source.selectedCollectionId &&
+        tab.selectedCollectionRequestId === source.selectedCollectionRequestId
+      : source.selectedHistoryId != null && tab.selectedHistoryId === source.selectedHistoryId,
+  );
+  if (existing) return tabState(state.requestTabs, existing.id);
+  const tab = createRequestTab(request, source);
+  return tabState([...state.requestTabs, tab], tab.id);
+}
 
-  activeTab: "params",
+export function createRequestStore() {
+  const firstTab = createRequestTab();
 
-  activeResponseTab: "body",
+  return create((set) => ({
+    ...tabState([firstTab], firstTab.id),
+    history: loadHistory(),
+    collections: loadCollections(),
+    environment: loadEnvironment(),
 
-  params: [],
+    newRequest: (request = {}) => set(state => openRequest(state, request)),
 
-  headers: [],
+    selectRequest: (id) => set(state =>
+      state.requestTabs.some(tab => tab.id === id)
+        ? tabState(state.requestTabs, id)
+        : state,
+    ),
 
-  body: "",
-
-  auth: {
-    type: "none",
-    token: "",
-    username: "",
-    password: "",
-    apiKey: "",
-    apiValue: "",
-    apiLocation: "header",
-  },
-
-  /* ==========================================
-     SIDEBAR
-  ========================================== */
-
-  selectedHistoryId: null,
-
-  selectedCollectionId: null,
-
-  selectedCollectionRequestId: null,
-
-  /* ==========================================
-     STORAGE
-  ========================================== */
-
-  history: loadHistory(),
-
-  collections: loadCollections(),
-
-  environment: loadEnvironment(),
-
-  /* ==========================================
-     REQUEST SETTERS
-  ========================================== */
-
-  setMethod: (method) => set({ method }),
-
-  setUrl: (url) => set({ url }),
-
-  setResponse: (response) => set({ response }),
-
-  setLoading: (loading) => set({ loading }),
-
-  setActiveTab: (activeTab) => set({ activeTab }),
-
-  setParams: (params) => set({ params }),
-
-  setHeaders: (headers) => set({ headers }),
-
-  setBody: (body) => set({ body }),
-
-  setAuth: (auth) => set({ auth }),
-
-  setActiveResponseTab: (tab) =>
-    set({
-      activeResponseTab: tab,
+    closeRequest: (id) => set(state => {
+      const index = state.requestTabs.findIndex(tab => tab.id === id);
+      if (index === -1) return state;
+      const tabs = state.requestTabs.filter(tab => tab.id !== id);
+      if (!tabs.length) tabs.push(createRequestTab());
+      const activeId = id === state.activeRequestId
+        ? tabs[Math.min(index, tabs.length - 1)].id
+        : state.activeRequestId;
+      return tabState(tabs, activeId);
     }),
 
-  /* ==========================================
-     ENVIRONMENT
-  ========================================== */
+    setMethod: (method) => set(state => updateTab(state, state.activeRequestId, { method })),
+    setUrl: (url) => set(state => updateTab(state, state.activeRequestId, { url })),
+    setParams: (params) => set(state => updateTab(state, state.activeRequestId, { params })),
+    setHeaders: (headers) => set(state => updateTab(state, state.activeRequestId, { headers })),
+    setBody: (body) => set(state => updateTab(state, state.activeRequestId, { body })),
+    setAuth: (auth) => set(state => updateTab(state, state.activeRequestId, { auth })),
+    setActiveTab: (activeTab) => set(state => updateTab(state, state.activeRequestId, { activeTab })),
+    setActiveResponseTab: (activeResponseTab) => set(state => updateTab(state, state.activeRequestId, { activeResponseTab })),
+    setParamDraft: (paramDraft) => set(state => updateTab(state, state.activeRequestId, { paramDraft })),
+    setHeaderDraft: (headerDraft) => set(state => updateTab(state, state.activeRequestId, { headerDraft })),
 
-  setEnvironment: (environment) => {
-    saveEnvironment(environment);
+    // Async callers pass the originating tab ID, even after the user switches tabs.
+    setResponse: (response, id) => set(state => updateTab(state, id ?? state.activeRequestId, { response })),
+    setLoading: (loading, id) => set(state => updateTab(state, id ?? state.activeRequestId, { loading })),
 
-    set({
-      environment,
-    });
-  },
+    markRequestSaved: (id, { name, collectionId, requestId }) => set(state => updateTab(state, id, {
+      name,
+      selectedCollectionId: collectionId,
+      selectedCollectionRequestId: requestId,
+      selectedHistoryId: null,
+    })),
 
-  getEnvironmentValue: (key) => {
-    const vars = loadEnvironment();
+    setEnvironment: (environment) => {
+      saveEnvironment(environment);
+      set({ environment });
+    },
 
-    const variable = vars.find((item) => item.key === key);
+    getEnvironmentValue: (key) => loadEnvironment().find(item => item.key === key)?.value ?? "",
 
-    return variable ? variable.value : "";
-  },
-
-  /* ==========================================
-     HISTORY
-  ========================================== */
-
-  addHistory: (request) =>
-    set((state) => {
-      const duplicate = state.history.findIndex(
-        (item) => item.method === request.method && item.url === request.url,
-      );
-
-      let history = [...state.history];
-
-      if (duplicate !== -1) {
-        history.splice(duplicate, 1);
-      }
-
-      history.unshift(request);
-
-      history = history.slice(0, MAX_HISTORY);
-
+    addHistory: (request) => set(state => {
+      const history = [request, ...state.history.filter(item =>
+        item.method !== request.method || item.url !== request.url,
+      )].slice(0, MAX_HISTORY);
       saveHistory(history);
-
-      return {
-        history,
-      };
+      return { history };
     }),
 
-  clearHistory: () =>
-    set(() => {
+    clearHistory: () => set(state => {
       saveHistory([]);
-
-      return {
-        history: [],
-        selectedHistoryId: null,
-      };
+      const tabs = state.requestTabs.map(tab => ({ ...tab, selectedHistoryId: null }));
+      return { history: [], ...tabState(tabs, state.activeRequestId) };
     }),
 
-  loadRequest: (request) =>
-    set({
-      method: request.method,
-      url: request.url,
-      params: request.params,
-      headers: request.headers,
-      body: request.body,
-      auth: request.auth,
+    loadRequest: (request) => set(state => openRequest(state, request, {
       selectedHistoryId: request.id,
-      selectedCollectionId: null,
-      selectedCollectionRequestId: null,
-    }),
+    })),
 
-  /* ==========================================
-     COLLECTIONS
-  ========================================== */
-
-  addCollection: (name, id = `collection-${Date.now()}`) =>
-    set((state) => {
-      const collection = {
-        id,
-        name,
-        requests: [],
-      };
-      const collections = [...state.collections, collection];
-
+    addCollection: (name, id = crypto.randomUUID()) => set(state => {
+      const collections = [...state.collections, { id, name, requests: [] }];
       saveCollections(collections);
-
-      return {
-        collections,
-      };
-    }),
-
-  addCollectionRequest: (collectionId, request) =>
-    set((state) => {
-      const collections = state.collections.map((collection) =>
-        collection.id === collectionId
-          ? { ...collection, requests: [...collection.requests, request] }
-          : collection,
-      );
-
-      saveCollections(collections);
-
       return { collections };
     }),
 
-  deleteCollection: (id) =>
-    set((state) => {
-      const collections = state.collections.filter((item) => item.id !== id);
-
-      saveCollections(collections);
-
-      return {
-        collections,
-        selectedCollectionId:
-          state.selectedCollectionId === id ? null : state.selectedCollectionId,
-      };
-    }),
-
-  deleteCollectionRequest: (collectionId, requestId) =>
-    set((state) => {
-      const collections = state.collections.map((collection) =>
-        collection.id === collectionId
-          ? {
-              ...collection,
-              requests: collection.requests.filter(
-                (request) => request.id !== requestId,
-              ),
-            }
-          : collection,
+    addCollectionRequest: (collectionId, request) => set(state => {
+      const collections = state.collections.map(collection => collection.id === collectionId
+        ? { ...collection, requests: [...collection.requests, request] }
+        : collection,
       );
-
       saveCollections(collections);
-
-      return {
-        collections,
-        selectedCollectionRequestId:
-          state.selectedCollectionRequestId === requestId
-            ? null
-            : state.selectedCollectionRequestId,
-      };
+      return { collections };
     }),
 
-  loadCollection: (request, collectionId) =>
-    set({
-      method: request.method,
-      url: request.url,
-      params: request.params,
-      headers: request.headers,
-      body: request.body,
-      auth: request.auth,
+    deleteCollection: (id) => set(state => {
+      const collections = state.collections.filter(collection => collection.id !== id);
+      const tabs = state.requestTabs.map(tab => tab.selectedCollectionId === id
+        ? { ...tab, selectedCollectionId: null, selectedCollectionRequestId: null }
+        : tab,
+      );
+      saveCollections(collections);
+      return { collections, ...tabState(tabs, state.activeRequestId) };
+    }),
+
+    deleteCollectionRequest: (collectionId, requestId) => set(state => {
+      const collections = state.collections.map(collection => collection.id === collectionId
+        ? { ...collection, requests: collection.requests.filter(request => request.id !== requestId) }
+        : collection,
+      );
+      const tabs = state.requestTabs.map(tab =>
+        tab.selectedCollectionId === collectionId && tab.selectedCollectionRequestId === requestId
+          ? { ...tab, selectedCollectionId: null, selectedCollectionRequestId: null }
+          : tab,
+      );
+      saveCollections(collections);
+      return { collections, ...tabState(tabs, state.activeRequestId) };
+    }),
+
+    loadCollection: (request, collectionId) => set(state => openRequest(state, request, {
       selectedCollectionId: collectionId,
       selectedCollectionRequestId: request.id,
-      selectedHistoryId: null,
-    }),
-}));
+    })),
+  }));
+}
 
-export default useRequestStore;
+export default createRequestStore();

@@ -1,14 +1,16 @@
 import Editor from "@monaco-editor/react";
 import useRequestStore from "../../store/requestStore";
+import { isJsonContentType } from "../../utils/request";
 
 function BodyEditor() {
-  const { body, setBody } = useRequestStore();
+  const { body, headers, setBody } = useRequestStore();
+  const contentType = headers.find(header => header.key.toLowerCase() === "content-type")?.value;
 
   return (
     <div className="body-editor-container">
       <Editor
         height="450px"
-        defaultLanguage="json"
+        language={isJsonContentType(contentType) ? "json" : "plaintext"}
         value={body}
         onChange={(value) => setBody(value || "")}
         theme="vs-dark"

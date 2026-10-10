@@ -5,6 +5,7 @@ import SaveRequestModal from "../SaveRequestModal/SaveRequestModal";
 import Button from "../ui/Button/Button";
 import Input from "../ui/Input/Input";
 import { Send, Save } from "lucide-react";
+import { isJsonContentType, REQUEST_METHODS } from "../../utils/request";
 
 function RequestBar() {
   const {
@@ -15,6 +16,7 @@ function RequestBar() {
     body,
     auth,
     loading,
+    activeRequestId,
     history,
     collections,
     addHistory,
@@ -24,6 +26,7 @@ function RequestBar() {
     setUrl,
     setResponse,
     setLoading,
+    markRequestSaved,
   } = useRequestStore();
 
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -116,7 +119,8 @@ function RequestBar() {
     if (!url.trim() || loading) return;
 
     try {
-      if (body.trim()) {
+      const contentType = headers.find(header => header.key.toLowerCase() === "content-type")?.value;
+      if (body.trim() && isJsonContentType(contentType)) {
         JSON.parse(body);
       }
     } catch (err) {
@@ -124,7 +128,8 @@ function RequestBar() {
       return;
     }
 
-    setLoading(true);
+    const requestId = activeRequestId;
+    setLoading(true, requestId);
 
     try {
       const response = await apiClient({
@@ -136,10 +141,10 @@ function RequestBar() {
         auth,
       });
 
-      setResponse(response);
+      setResponse(response, requestId);
 
       addHistory({
-        id: Date.now(),
+        id: crypto.randomUUID(),
         method,
         url,
         params,
@@ -160,10 +165,10 @@ function RequestBar() {
         time: 0,
       };
 
-      setResponse(errorResponse);
+      setResponse(errorResponse, requestId);
 
       addHistory({
-        id: Date.now(),
+        id: crypto.randomUUID(),
         method,
         url,
         params,
@@ -174,7 +179,7 @@ function RequestBar() {
         time: errorResponse.time,
       });
     } finally {
-      setLoading(false);
+      setLoading(false, requestId);
     }
   };
 
@@ -182,12 +187,13 @@ function RequestBar() {
     let targetCollectionId = collectionId;
 
     if (!targetCollectionId) {
-      targetCollectionId = `collection-${Date.now()}`;
+      targetCollectionId = crypto.randomUUID();
       addCollection(collectionName, targetCollectionId);
     }
 
+    const savedRequestId = crypto.randomUUID();
     addCollectionRequest(targetCollectionId, {
-      id: Date.now(),
+      id: savedRequestId,
       name: requestName,
       method,
       url,
@@ -195,6 +201,11 @@ function RequestBar() {
       headers,
       body,
       auth,
+    });
+    markRequestSaved(activeRequestId, {
+      name: requestName,
+      collectionId: targetCollectionId,
+      requestId: savedRequestId,
     });
     setShowSaveModal(false);
   };
@@ -207,15 +218,12 @@ function RequestBar() {
         onChange={(e) => setMethod(e.target.value)}
         disabled={loading}
       >
-        <option value="GET">GET</option>
-        <option value="POST">POST</option>
-        <option value="PUT">PUT</option>
-        <option value="PATCH">PATCH</option>
-        <option value="DELETE">DELETE</option>
+        {REQUEST_METHODS.map(value => <option key={value} value={value}>{value}</option>)}
       </select>
 
       <div className="url-autocomplete" ref={wrapperRef}>
         <Input
+          id="request-url"
           className="url-input"
           type="text"
           placeholder="Enter request URL..."

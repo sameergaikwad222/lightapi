@@ -1,14 +1,11 @@
-import { useState } from "react";
 import useRequestStore from "../../store/requestStore";
 
 import Button from "../ui/Button/Button";
 import Input from "../ui/Input/Input";
 
 function ParamsEditor() {
-  const { params, setParams } = useRequestStore();
-
-  const [paramKey, setParamKey] = useState("");
-  const [paramValue, setParamValue] = useState("");
+  const { params, setParams, paramDraft, setParamDraft } = useRequestStore();
+  const { key: paramKey, value: paramValue } = paramDraft;
 
   const addParam = () => {
     if (!paramKey.trim()) return;
@@ -21,8 +18,7 @@ function ParamsEditor() {
       },
     ]);
 
-    setParamKey("");
-    setParamValue("");
+    setParamDraft({ key: "", value: "" });
   };
 
   const removeParam = (index) => {
@@ -43,13 +39,13 @@ function ParamsEditor() {
           <Input
             placeholder="Key"
             value={paramKey}
-            onChange={(e) => setParamKey(e.target.value)}
+            onChange={(e) => setParamDraft({ ...paramDraft, key: e.target.value })}
           />
 
           <Input
             placeholder="Value"
             value={paramValue}
-            onChange={(e) => setParamValue(e.target.value)}
+            onChange={(e) => setParamDraft({ ...paramDraft, value: e.target.value })}
           />
         </div>
 

@@ -1,14 +1,11 @@
-import { useState } from "react";
 import useRequestStore from "../../store/requestStore";
 
 import Button from "../ui/Button/Button";
 import Input from "../ui/Input/Input";
 
 function HeadersEditor() {
-  const { headers, setHeaders } = useRequestStore();
-
-  const [headerKey, setHeaderKey] = useState("");
-  const [headerValue, setHeaderValue] = useState("");
+  const { headers, setHeaders, headerDraft, setHeaderDraft } = useRequestStore();
+  const { key: headerKey, value: headerValue } = headerDraft;
 
   const addHeader = () => {
     if (!headerKey.trim()) return;
@@ -21,8 +18,7 @@ function HeadersEditor() {
       },
     ]);
 
-    setHeaderKey("");
-    setHeaderValue("");
+    setHeaderDraft({ key: "", value: "" });
   };
 
   const removeHeader = (index) => {
@@ -43,13 +39,13 @@ function HeadersEditor() {
           <Input
             placeholder="Header"
             value={headerKey}
-            onChange={(e) => setHeaderKey(e.target.value)}
+            onChange={(e) => setHeaderDraft({ ...headerDraft, key: e.target.value })}
           />
 
           <Input
             placeholder="Value"
             value={headerValue}
-            onChange={(e) => setHeaderValue(e.target.value)}
+            onChange={(e) => setHeaderDraft({ ...headerDraft, value: e.target.value })}
           />
         </div>
 

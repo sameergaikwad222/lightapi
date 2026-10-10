@@ -6,20 +6,20 @@ import BodyEditor from "./BodyEditor";
 import AuthEditor from "./AuthEditor";
 
 function RequestEditor() {
-  const { activeTab } = useRequestStore();
+  const { activeTab, activeRequestId } = useRequestStore();
 
   switch (activeTab) {
     case "params":
-      return <ParamsEditor />;
+      return <ParamsEditor key={activeRequestId} />;
 
     case "headers":
-      return <HeadersEditor />;
+      return <HeadersEditor key={activeRequestId} />;
 
     case "body":
-      return <BodyEditor />;
+      return <BodyEditor key={activeRequestId} />;
 
     case "auth":
-      return <AuthEditor />;
+      return <AuthEditor key={activeRequestId} />;
 
     default:
       return <div>Other Tabs</div>;

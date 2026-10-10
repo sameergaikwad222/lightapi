@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import {
   ChevronDown,
   ChevronRight,
+  Folder,
   FolderOpen,
   Search,
   Trash2,
@@ -19,7 +20,6 @@ function Sidebar() {
     deleteCollectionRequest,
     clearHistory,
     selectedHistoryId,
-    selectedCollectionId,
     selectedCollectionRequestId,
   } = useRequestStore();
 
@@ -29,6 +29,20 @@ function Sidebar() {
 
   const [collectionsOpen, setCollectionsOpen] =
     useState(true);
+
+  const [collapsedCollections, setCollapsedCollections] = useState(() => new Set());
+
+  const toggleCollection = (id) => {
+    setCollapsedCollections((current) => {
+      const next = new Set(current);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
 
   const getRequestName = (url = "") => {
     try {
@@ -82,7 +96,7 @@ function Sidebar() {
 
       {/* HISTORY */}
 
-      <div className="sidebar-section">
+      <div className="sidebar-section history-section">
 
         <div className="sidebar-section-header">
 
@@ -117,7 +131,11 @@ function Sidebar() {
                 No requests found
               </div>
             ) : (
-              <ul className="sidebar-list">
+              <ul
+                className="sidebar-list history-list"
+                tabIndex={0}
+                aria-label="Request history"
+              >
                 {filteredHistory.map((item) => (
                   <li
                     key={item.id}
@@ -190,6 +208,8 @@ function Sidebar() {
             ) : (
               <ul className="sidebar-list">
                 {filteredCollections.map((collection) => {
+                  const isOpen = !collapsedCollections.has(collection.id);
+                  const requestListId = `collection-requests-${collection.id}`;
                   const requests = collection.requests.filter((item) => {
                     const q = search.toLowerCase();
 
@@ -205,24 +225,40 @@ function Sidebar() {
                   return (
                     <li key={collection.id} className="collection-folder">
                       <div className="collection-folder-header">
-                        <span className="collection-folder-name">
-                          <FolderOpen size={14} />
-                          {collection.name}
+                        <button
+                          type="button"
+                          className="collection-folder-name collection-folder-toggle"
+                          onClick={() => toggleCollection(collection.id)}
+                          aria-expanded={isOpen}
+                          aria-controls={requestListId}
+                          aria-label={`${isOpen ? "Collapse" : "Expand"} collection "${collection.name}"`}
+                        >
+                          {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                          {isOpen ? <FolderOpen size={14} /> : <Folder size={14} />}
+                          <span className="collection-folder-label" title={collection.name}>
+                            {collection.name}
+                          </span>
                           <span className="folder-count">
                             {collection.requests.length}
                           </span>
-                        </span>
+                        </button>
 
                         <button
-                          className="sidebar-delete"
+                          type="button"
+                          className="sidebar-delete collection-delete"
                           onClick={() => deleteCollection(collection.id)}
-                          title="Delete collection folder"
+                          title={`Delete collection "${collection.name}"`}
+                          aria-label={`Delete collection "${collection.name}"`}
                         >
                           <Trash2 size={14} />
                         </button>
                       </div>
 
-                      <ul className="collection-request-list">
+                      <ul
+                        id={requestListId}
+                        className="collection-request-list"
+                        hidden={!isOpen}
+                      >
                         {requests.map((item) => (
                           <li
                             key={item.id}

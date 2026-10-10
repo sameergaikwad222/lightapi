@@ -1,0 +1,109 @@
+.request-document-tabs {
+    display: flex;
+    align-items: stretch;
+    flex-shrink: 0;
+    min-width: 0;
+    height: 46px;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border);
+}
+
+.request-document-tab-list {
+    display: flex;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) var(--bg-primary);
+}
+
+.request-document-tab {
+    display: flex;
+    align-items: center;
+    flex: 0 0 220px;
+    min-width: 0;
+    border-right: 1px solid var(--border);
+    border-top: 2px solid transparent;
+    color: var(--text-secondary);
+}
+
+.request-document-tab.active {
+    border-top-color: var(--primary);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.request-document-tab-select {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0 10px 0 14px;
+    gap: 8px;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+}
+
+.request-tab-method {
+    flex-shrink: 0;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.request-tab-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+}
+
+.request-tab-loading {
+    flex-shrink: 0;
+    animation: request-tab-spin 1s linear infinite;
+}
+
+.request-document-tab-close,
+.request-document-tab-add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    margin-right: 6px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.request-document-tab-add {
+    align-self: center;
+    margin-left: 8px;
+}
+
+.request-document-tab-select:hover,
+.request-document-tab-close:hover,
+.request-document-tab-add:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.request-document-tabs button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
+}
+
+@keyframes request-tab-spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .request-tab-loading { animation: none; }
+}

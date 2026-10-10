@@ -43,6 +43,33 @@
 .header-left {
     display: flex;
     align-items: center;
+    gap: 12px;
+}
+
+.sidebar-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: .15s;
+}
+
+.sidebar-toggle:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.sidebar-toggle:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
 }
 
 .header-right {
@@ -77,4 +104,24 @@
     border-color: var(--primary);
 
     background: rgba(59,130,246,.08);
+}
+
+.header-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 760px) {
+    .header {
+        height: auto;
+        min-height: 60px;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 12px 16px;
+    }
+
+    .header-right {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
 }

@@ -1,5 +1,6 @@
 import axios from "axios";
 import useRequestStore from "../store/requestStore";
+import { isJsonContentType } from "../utils/request";
 
 function resolveVariables(value) {
   if (!value || typeof value !== "string") {
@@ -58,13 +59,17 @@ const apiClient = async ({ method, url, params, headers, body, auth }) => {
 
   let requestBody;
 
-  if (body.trim()) {
+  if (body) {
     const resolvedBody = resolveVariables(body);
+    const contentType = Object.entries(requestHeaders).find(([key]) => key.toLowerCase() === "content-type")?.[1];
 
-    try {
-      requestBody = JSON.parse(resolvedBody);
-    } catch {
-      requestBody = resolvedBody;
+    requestBody = resolvedBody;
+    if (isJsonContentType(contentType)) {
+      try {
+        requestBody = JSON.parse(resolvedBody);
+      } catch {
+        requestBody = resolvedBody;
+      }
     }
   }
 

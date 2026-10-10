@@ -4,7 +4,8 @@
 @import "./sidebar.css";
 @import "./requestBar.css";
 @import "./requestTabs.css";
+@import "./requestWorkspaceTabs.css";
 @import "./requestEditor.css";
-@import "./responseViewer.css";  
+@import "./responseViewer.css";
 @import "./modal.css";
-@import "./monaco.css"; 
+@import "./monaco.css";

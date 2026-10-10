@@ -99,3 +99,49 @@
 
     font: inherit;
 }
+
+.curl-import-modal {
+    width: min(640px, calc(100vw - 32px));
+    max-height: calc(100vh - 32px);
+    margin: auto;
+    overflow: auto;
+    color: var(--text-primary);
+}
+
+.curl-import-modal::backdrop {
+    background: rgba(0, 0, 0, .55);
+    backdrop-filter: blur(4px);
+}
+
+.curl-import-modal form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.curl-import-description {
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.curl-command {
+    width: 100%;
+    min-height: 180px;
+    padding: 12px;
+    resize: vertical;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font: 13px/1.6 "JetBrains Mono", monospace;
+}
+
+.curl-command:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.curl-import-error {
+    color: #f87171;
+    font-size: 13px;
+}
